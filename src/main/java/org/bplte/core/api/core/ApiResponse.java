@@ -1,0 +1,27 @@
+package org.bplte.core.api.core;
+
+import lombok.*;
+import org.bplte.core.api.core.message.ResponseCode;
+import org.bplte.core.api.core.message.ResponseCodeGeneral;
+
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ApiResponse<T> {
+	private String resultCode;
+	private String resultMessage;
+	private String resultDetailMessage;
+	private T data;
+	
+	public static <T> ApiResponse<T> success(T data) {
+		ResponseCode code = ResponseCodeGeneral.SUCCESS.getResponseCode();
+		return ApiResponse.<T>builder()
+				.resultCode(code.getResultCode())
+				.resultMessage(code.getResultMessage())
+				.resultDetailMessage(code.getResultDetailMessage())
+				.data(data)
+				.build();
+	}
+}
