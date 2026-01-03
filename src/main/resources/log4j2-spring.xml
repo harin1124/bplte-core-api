@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <!-- 컬러 패턴 정의 -->
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} %highlight{%-5level}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=blue} [%t] %style{%logger{36}}{cyan} : %msg%n
+        </Property>
+    </Properties>
+    
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}" disableAnsi="false"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <!-- SQL문만 로그로 남기기 (Pretty Print 적용) -->
+        <Logger name="jdbc.sqlonly" level="OFF"/>
+        <!-- SQL문과 실행 시간(ms)을 같이 남기기 -->
+        <Logger name="jdbc.sqltiming" level="INFO"/>
+        <!-- ResultSet을 제외한 모든 JDBC 호출 정보 출력 (매우 상세함) -->
+        <Logger name="jdbc.audit" level="OFF"/>
+        <!-- ResultSet을 포함한 모든 JDBC 호출 정보 출력 (로그 양이 매우 많음) -->
+        <Logger name="jdbc.resultset" level="OFF"/>
+        <!-- 데이터베이스 테이블을 표 형태로 출력 -->
+        <Logger name="jdbc.resultsettable" level="OFF"/>
+        <!-- Connection 열고 닫는 로그 -->
+        <Logger name="jdbc.connection" level="OFF"/>
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
