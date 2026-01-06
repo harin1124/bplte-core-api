@@ -16,6 +16,7 @@ public class AuthServiceImpl implements AuthService {
 	public int join(AuthJoinRequest request) {
 		request.setRgtrId(request.getUserId());
 		request.setMdfrId(request.getUserId());
+		request.setSalt("test");
 		return authMapper.userInsert(UserEntity.toEntity(request));
 	}
 }
