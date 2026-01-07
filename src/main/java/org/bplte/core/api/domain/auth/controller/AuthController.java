@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 	private final AuthService authService;
-	
-	@GetMapping("/test")
-	public String test() {
-		return "test. one - two.";
-	}
-	
+
 	@PostMapping("/join")
 	public ApiResponse<Integer> join(@RequestBody AuthJoinRequest request) {
 		return ApiResponse.success(authService.join(request));
+	}
+	
+	@PostMapping("/login")
+	public ApiResponse<String> login() {
+		return ApiResponse.success("login");
 	}
 }
