@@ -3,6 +3,7 @@ package org.bplte.core.api.domain.auth.controller;
 import lombok.RequiredArgsConstructor;
 import org.bplte.core.api.core.ApiResponse;
 import org.bplte.core.api.domain.auth.dto.request.AuthJoinRequest;
+import org.bplte.core.api.domain.auth.dto.request.AuthLoginRequest;
 import org.bplte.core.api.domain.auth.service.AuthService;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
-	public ApiResponse<String> login() {
-		return ApiResponse.success("login");
+	public ApiResponse<String> login(@RequestBody AuthLoginRequest request) {
+		return ApiResponse.success(authService.login(request));
 	}
 }

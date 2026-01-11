@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.bplte.core.api.domain.user.mapper.UserMapper">
+    <insert id="userInsert" parameterType="org.bplte.core.api.domain.user.entity.UserEntity">
+        INSERT INTO TBL_USER (
+              USER_ID
+            , USER_NAME
+            , EMAIL
+            , SALT
+            , PASSWORD
+            , DEL_YN
+            , REG_DT
+            , RGTR_ID
+            , MDFCN_DT
+            , MDFR_ID
+        ) VALUES (
+              #{userId}
+            , #{userName}
+            , #{email}
+            , #{salt}
+            , #{password}
+            , 'N'
+            , NOW()
+            , #{rgtrId}
+            , NOW()
+            , #{mdfrId}
+        )
+    </insert>
+    
+    <select id="selectUserByUserId" parameterType="String" resultType="org.bplte.core.api.domain.user.entity.UserEntity">
+        SELECT
+              USER_ID     AS userId
+            , USER_NAME   AS userName
+            , EMAIL       AS email
+            , SALT        AS salt
+            , PASSWORD    AS password
+            , DEL_YN      AS delYn
+            , REG_DT      AS regDt
+            , RGTR_ID     AS rgtrId
+            , MDFCN_DT    AS mdfcnDt
+            , MDFR_ID     AS mdfrId
+        FROM TBL_USER
+        WHERE USER_ID = #{userId} AND DEL_YN = 'N'
+    </select>
+</mapper>

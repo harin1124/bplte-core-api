@@ -3,6 +3,7 @@ package org.bplte.core.api.core;
 import lombok.*;
 import org.bplte.core.api.core.message.ResponseCode;
 import org.bplte.core.api.core.message.ResponseCodeGeneral;
+import org.bplte.core.api.core.message.ResponseCodeInterface;
 
 @Getter
 @Setter
@@ -22,6 +23,15 @@ public class ApiResponse<T> {
 				.resultMessage(code.getResultMessage())
 				.resultDetailMessage(code.getResultDetailMessage())
 				.data(data)
+				.build();
+	}
+	
+	public static <T> ApiResponse<T> error(ResponseCodeInterface paramCode) {
+		ResponseCode code = paramCode.getResponseCode();
+		return ApiResponse.<T>builder()
+				.resultCode(code.getResultCode())
+				.resultMessage(code.getResultMessage())
+				.resultDetailMessage(code.getResultDetailMessage())
 				.build();
 	}
 }
