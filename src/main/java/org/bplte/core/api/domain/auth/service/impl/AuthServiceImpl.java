@@ -6,6 +6,7 @@ import org.bplte.core.api.core.exception.ApiException;
 import org.bplte.core.api.core.message.ResponseCodeGeneral;
 import org.bplte.core.api.domain.auth.dto.request.AuthJoinRequest;
 import org.bplte.core.api.domain.auth.dto.request.AuthLoginRequest;
+import org.bplte.core.api.domain.auth.dto.response.AuthLoginResponse;
 import org.bplte.core.api.domain.auth.service.AuthService;
 import org.bplte.core.api.domain.user.entity.UserEntity;
 import org.bplte.core.api.domain.user.mapper.UserMapper;
@@ -42,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 	
 	@Override
-	public String login(AuthLoginRequest request) {
+	public AuthLoginResponse login(AuthLoginRequest request) {
 		// 사용자 정보 조회
 		UserEntity user = userMapper.selectUserByUserId(request.getUserId());
 		
@@ -57,7 +58,13 @@ public class AuthServiceImpl implements AuthService {
 			throw new ApiException(ResponseCodeGeneral.BAD_REQUEST);
 		}
 		
-		return jwtTokenProvider.createAccessToken(user.getUserId(), List.of("USER"));
+		String accessToken = jwtTokenProvider.createAccessToken(user.getUserId(), List.of("USER"));
+		
+		return AuthLoginResponse.builder()
+				.userId(user.getUserId())
+				.userName(user.getUserName())
+				.accessToken(accessToken)
+				.build();
 	}
 	
 	/**
