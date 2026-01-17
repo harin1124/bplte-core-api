@@ -1,6 +1,7 @@
 package org.bplte.core.api.config;
 
 import lombok.RequiredArgsConstructor;
+import org.bplte.core.api.config.filter.JwtAuthenticationEntryPoint;
 import org.bplte.core.api.config.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,16 +20,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 	
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
 		 	.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+			.exceptionHandling(exceptions -> exceptions
+				.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 			.authorizeHttpRequests(auth -> auth
 				.requestMatchers("/auth/**").permitAll() // 인증 관련 엔드포인트
-				.anyRequest().authenticated())
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+				.anyRequest().authenticated()) // /auth를 제외한 모든 요청은 JWT 토큰 필요
+			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 	

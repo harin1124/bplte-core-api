@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bplte.core.api.config.jwt.JwtTokenProvider;
+import org.bplte.core.api.domain.auth.property.AuthProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,37 +28,51 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+		String requestURI = request.getRequestURI();
+		log.debug("JWT Authentication Filter - Processing request: {}", requestURI);
+		
 		String token = resolveToken(request);
 		
 		if (token != null && jwtTokenProvider.validateToken(token)) {
-			String userId = jwtTokenProvider.getUserId(token);
-			List<String> roles = jwtTokenProvider.getRoles(token);
-			
-			// Spring Security 인증 객체 생성
-			List<GrantedAuthority> authorities = roles.stream()
-					.map(SimpleGrantedAuthority::new)
-					.collect(Collectors.toList());
-			
-			UsernamePasswordAuthenticationToken authentication =
-					new UsernamePasswordAuthenticationToken(userId, null, authorities);
-			
-			SecurityContextHolder.getContext().setAuthentication(authentication);
+			try {
+				String userId = jwtTokenProvider.getUserId(token);
+				List<String> roles = jwtTokenProvider.getRoles(token);
+				
+				log.debug("JWT Authentication successful for user: {}", userId);
+				
+				// Spring Security 인증 객체 생성
+				List<GrantedAuthority> authorities = roles.stream()
+						.map(SimpleGrantedAuthority::new)
+						.collect(Collectors.toList());
+				
+				UsernamePasswordAuthenticationToken authentication =
+						new UsernamePasswordAuthenticationToken(userId, null, authorities);
+				
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+			} catch (Exception e) {
+				log.error("JWT Authentication failed: {}", e.getMessage());
+				SecurityContextHolder.clearContext();
+			}
+		} else if (token == null) {
+			log.debug("No JWT token found in request: {}", requestURI);
+		} else {
+			log.warn("Invalid JWT token for request: {}", requestURI);
 		}
 		
 		filterChain.doFilter(request, response);
 	}
 	
 	private String resolveToken(HttpServletRequest request) {
-		// 1. 쿠키에서 토큰 확인 (우선순위)
+		// HttpOnly 쿠키에서 토큰 확인 (우선순위)
 		if (request.getCookies() != null) {
 			for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
-				if ("accessToken".equals(cookie.getName())) {
+				if (AuthProperties.accessToken.equals(cookie.getName())) {
 					return cookie.getValue();
 				}
 			}
 		}
 		
-		// 2. Authorization 헤더에서 토큰 확인 (하위 호환성)
+		// Authorization 헤더에서 토큰 확인 (하위 호환성)
 		String bearerToken = request.getHeader("Authorization");
 		if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
 			return bearerToken.substring(7);
