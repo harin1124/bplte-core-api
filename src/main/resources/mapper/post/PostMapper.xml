@@ -13,7 +13,7 @@
             , MDFCN_DT
             , MDFR_ID
         ) VALUES (
-            , #{ownerUserId}
+              #{ownerUserId}
             , #{title}
             , #{content}
             , #{searchContent}
