@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.bplte.core.api.domain.post.mapper.PostMapper">
+    <insert id="insertPost" parameterType="org.bplte.core.api.domain.post.entity.PostEntity">
+        INSERT INTO TBL_POST (
+              OWNER_USER_ID
+            , TITLE
+            , CONTENT
+            , SEARCH_CONTENT
+            , DEL_YN
+            , REG_DT
+            , RGTR_ID
+            , MDFCN_DT
+            , MDFR_ID
+        ) VALUES (
+            , #{ownerUserId}
+            , #{title}
+            , #{content}
+            , #{searchContent}
+            , 'N'
+            , NOW()
+            , #{rgtrId}
+            , NOW()
+            , #{mdfrId}
+        )
+    </insert>
+    
+    <select id="selectPostList"
+            resultType="org.bplte.core.api.domain.post.dto.response.PostListResponse">
+        SELECT /* org.bplte.core.api.domain.post.mapper.PostMapper.selectPostList */
+              POST_NUMBER     AS postNumber
+            , OWNER_USER_ID   AS ownerUserId
+            , TITLE           AS title
+            , REG_DT          AS regDt
+            , RGTR_ID         AS rgtrId
+            , REG_DT          AS regDt
+            , MDFCN_DT        AS mdfcnDt
+            , MDFR_ID         AS mdfrId
+        FROM TBL_POST
+        WHERE DEL_YN = 'N'
+    </select>
+</mapper>
