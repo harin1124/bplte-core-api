@@ -5,6 +5,6 @@ import org.bplte.core.api.domain.user.entity.UserEntity;
 
 @Mapper
 public interface UserMapper {
-	int userInsert(UserEntity user);
+	int insertUser(UserEntity user);
 	UserEntity selectUserByUserId(String userId);
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.bplte.core.api.domain.user.mapper.UserMapper">
-    <insert id="userInsert" parameterType="org.bplte.core.api.domain.user.entity.UserEntity">
+    <insert id="insertUser" parameterType="org.bplte.core.api.domain.user.entity.UserEntity">
         INSERT INTO TBL_USER (
               USER_ID
             , USER_NAME
