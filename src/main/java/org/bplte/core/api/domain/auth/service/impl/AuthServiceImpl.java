@@ -39,7 +39,7 @@ public class AuthServiceImpl implements AuthService {
 		request.setRgtrId(request.getUserId());
 		request.setMdfrId(request.getUserId());
 		
-		return userMapper.userInsert(UserEntity.toEntity(request));
+		return userMapper.insertUser(UserEntity.toEntity(request));
 	}
 	
 	@Override
