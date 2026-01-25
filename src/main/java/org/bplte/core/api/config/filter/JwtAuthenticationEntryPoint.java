@@ -22,9 +22,7 @@ import java.io.IOException;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
 	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response, 
-						AuthenticationException authException) throws IOException {
-		
+	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
 		String requestURI = request.getRequestURI();
 		log.warn("Unauthorized access attempt to: {}", requestURI);
 		
