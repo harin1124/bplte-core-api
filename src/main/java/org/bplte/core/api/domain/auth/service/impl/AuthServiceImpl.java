@@ -7,6 +7,7 @@ import org.bplte.core.api.core.message.ResponseCodeGeneral;
 import org.bplte.core.api.domain.auth.dto.request.AuthJoinRequest;
 import org.bplte.core.api.domain.auth.dto.request.AuthLoginRequest;
 import org.bplte.core.api.domain.auth.dto.response.AuthLoginResponse;
+import org.bplte.core.api.domain.auth.mapper.AuthMapper;
 import org.bplte.core.api.domain.auth.service.AuthService;
 import org.bplte.core.api.domain.user.entity.UserEntity;
 import org.bplte.core.api.domain.user.mapper.UserMapper;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 	private final UserMapper userMapper;
+	private final AuthMapper authMapper;
 	private final JwtTokenProvider jwtTokenProvider;
 	
 	@Override
@@ -65,6 +67,18 @@ public class AuthServiceImpl implements AuthService {
 				.userName(user.getUserName())
 				.accessToken(accessToken)
 				.build();
+	}
+	
+	@Override
+	public boolean availableUserId(String userId) {
+		int sameUserIdCount = authMapper.selectCountByUserId(userId);
+		return sameUserIdCount == 0;
+	}
+	
+	@Override
+	public boolean availableEmail(String email) {
+		int sameEmailCount = authMapper.selectCountByEmail(email);
+		return sameEmailCount == 0;
 	}
 	
 	/**

@@ -7,4 +7,6 @@ import org.bplte.core.api.domain.auth.dto.response.AuthLoginResponse;
 public interface AuthService {
 	int join(AuthJoinRequest request);
 	AuthLoginResponse login(AuthLoginRequest request);
+	boolean availableUserId(String userId);
+	boolean availableEmail(String email);
 }
