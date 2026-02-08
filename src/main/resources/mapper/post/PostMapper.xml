@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.bplte.core.api.domain.post.mapper.PostMapper">
     <insert id="insertPost" parameterType="org.bplte.core.api.domain.post.entity.PostEntity">
-        INSERT INTO TBL_POST (
+        INSERT INTO TBL_POST ( /* org.bplte.core.api.domain.post.mapper.PostMapper */
               OWNER_USER_ID
             , TITLE
             , CONTENT
