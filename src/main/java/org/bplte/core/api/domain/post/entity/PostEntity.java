@@ -35,7 +35,7 @@ public class PostEntity {
 	/** 수정자 아이디 */
 	private String mdfrId;
 	
-	public static PostEntity toEntity(PostCreateRequest request) {
+	public static PostEntity createToEntity(PostCreateRequest request) {
 		return PostEntity.builder()
 				.ownerUserId(request.getRequestUserId())
 				.title(request.getTitle())
