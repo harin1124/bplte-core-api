@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.bplte.core.api.domain.post.mapper.PostMapper">
     <insert id="insertPost" parameterType="org.bplte.core.api.domain.post.entity.PostEntity">
-        INSERT INTO TBL_POST ( /* org.bplte.core.api.domain.post.mapper.PostMapper */
+        INSERT INTO TBL_POST ( /* org.bplte.core.api.domain.post.mapper.PostMapper.insertPost */
               OWNER_USER_ID
             , TITLE
             , CONTENT
@@ -25,18 +25,32 @@
         )
     </insert>
     
+    <select id="selectPostListCount" resultType="int">
+        SELECT /* org.bplte.core.api.domain.post.mapper.PostMapper.selectPostListCount */
+            COUNT(*)
+        FROM TBL_POST A
+        WHERE A.DEL_YN = 'N'
+    </select>
+    
     <select id="selectPostList"
+            parameterType="org.bplte.core.api.domain.post.dto.request.PostListRequest"
             resultType="org.bplte.core.api.domain.post.dto.response.PostListResponse">
         SELECT /* org.bplte.core.api.domain.post.mapper.PostMapper.selectPostList */
-              POST_NUMBER     AS postNumber
-            , OWNER_USER_ID   AS ownerUserId
-            , TITLE           AS title
-            , REG_DT          AS regDt
-            , RGTR_ID         AS rgtrId
-            , REG_DT          AS regDt
-            , MDFCN_DT        AS mdfcnDt
-            , MDFR_ID         AS mdfrId
-        FROM TBL_POST
-        WHERE DEL_YN = 'N'
+              A.POST_NUMBER                                AS postNumber
+            , A.OWNER_USER_ID                              AS ownerUserId
+            , A.TITLE                                      AS title
+            , DATE_FORMAT(A.REG_DT, '%Y-%m-%d %H:%i:%s')   AS regDt
+            , A.RGTR_ID                                    AS rgtrId
+            , B.USER_NAME                                  AS rgtrName
+            , CONCAT(B.USER_NAME, '(', A.RGTR_ID, ')')     AS rgtrInfo
+            , DATE_FORMAT(A.MDFCN_DT, '%Y-%m-%d %H:%i:%s') AS mdfcnDt
+            , A.MDFR_ID                                    AS mdfrId
+            , C.USER_NAME                                  AS mdfrName
+            , CONCAT(C.USER_NAME, '(', A.MDFR_ID, ')')     AS mdfrInfo
+        FROM TBL_POST A
+        LEFT OUTER JOIN TBL_USER B ON B.USER_ID = A.RGTR_ID
+        LEFT OUTER JOIN TBL_USER C ON C.USER_ID = A.MDFR_ID
+        WHERE A.DEL_YN = 'N'
+        LIMIT ${limit} OFFSET ${offset}
     </select>
 </mapper>
