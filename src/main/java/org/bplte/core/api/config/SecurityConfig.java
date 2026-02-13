@@ -30,9 +30,9 @@ public class SecurityConfig {
 			.exceptionHandling(exceptions -> exceptions
 				.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**")
-					.permitAll() // 인증 관련 엔드포인트
-				.anyRequest().authenticated()) // /auth를 제외한 모든 요청은 JWT 토큰 필요
+				.requestMatchers("/auth/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
+					.permitAll()
+				.anyRequest().authenticated())
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
