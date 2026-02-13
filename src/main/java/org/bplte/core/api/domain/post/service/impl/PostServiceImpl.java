@@ -1,6 +1,7 @@
 package org.bplte.core.api.domain.post.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.bplte.core.api.core.dto.response.PaginationResponse;
 import org.bplte.core.api.domain.post.dto.request.PostCreateRequest;
 import org.bplte.core.api.domain.post.dto.request.PostListRequest;
 import org.bplte.core.api.domain.post.dto.response.PostListResponse;
@@ -17,7 +18,7 @@ import java.util.List;
 public class PostServiceImpl implements PostService {
 	private final PostMapper postMapper;
 	
-	public List<PostListResponse> getPosts(PostListRequest request) {
+	public PaginationResponse<PostListResponse> getPosts(PostListRequest request) {
 		int totalCount = postMapper.selectPostListCount();
 		List<PostListResponse> postList = new ArrayList<>(0);
 		
@@ -25,7 +26,7 @@ public class PostServiceImpl implements PostService {
 			postList = postMapper.selectPostList(request);
 		}
 		
-		return postList;
+		return PaginationResponse.of(request.getSize(), totalCount, postList);
 	}
 	
 	public int createPost(PostCreateRequest request) {
