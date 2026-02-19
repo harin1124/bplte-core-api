@@ -59,21 +59,10 @@
 ```bash
 # 프로젝트 클론
 git clone [repository-url]
-cd bplte-core/bplte-core-api
+cd ./bplte-core-api
 
 # 애플리케이션 실행
 ./gradlew bootRun
-```
-
-### API 테스트
-```bash
-# 서버 상태 확인
-curl http://localhost:8080/health
-
-# 인증 테스트  
-curl -X POST http://localhost:8080/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"userId":"test","password":"test"}'
 ```
 
 ---
@@ -86,8 +75,8 @@ curl -X POST http://localhost:8080/auth/login \
 docs/
 ├── conventions/     # 개발 규칙 및 컨벤션
 ├── architecture/    # 시스템 아키텍처
-├── api/            # API 관련 문서  
-└── development/    # 개발 관련 가이드
+├── api/             # API 관련 문서  
+└── development/     # 개발 관련 가이드
 ```
 
 ---
