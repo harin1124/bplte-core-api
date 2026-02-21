@@ -85,9 +85,8 @@ public class AuthController {
 	 * @return true = 사용 가능, false = 사용 불가
 	 */
 	@GetMapping("/available/user_id")
-	@Operation(summary = "사용자 아이디 사용 가능 여부", description = "응답 true = 사용 가능, false = 사용 불가")
+	@Operation(summary = "사용자 아이디 사용 가능 여부", description = "응답 true = 사용 가능, false = 사용 불가. IP당 10분에 10회 호출 제한.")
 	public ApiResponse<Boolean> availableUserId(@RequestParam String userId) {
-		// TODO 보안상, Rate limiting 반드시 필요
 		return ApiResponse.success(authService.availableUserId(userId));
 	}
 	
