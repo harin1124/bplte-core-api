@@ -32,7 +32,7 @@ public class PostListResponse {
 	@Schema(description = "등록자 명", minLength = 1, maxLength = 30)
 	private String rgtrName;
 	
-	@Schema(description = "등록자 정보", format = "등록자 명(등록자 아이디)")
+	@Schema(description = "등록자 정보", format = SwaggerConstant.USER_INFO_DEFAULT, example = SwaggerConstant.USER_INFO_EXAMPLE)
 	private String rgtrInfo;
 	
 	@Schema(description = "수정 일시", format = SwaggerConstant.DATE_DEFAULT, example = SwaggerConstant.DATE_EXAMPLE)
@@ -44,6 +44,6 @@ public class PostListResponse {
 	@Schema(description = "수정자 명", minLength = 1, maxLength = 30)
 	private String mdfrName;
 	
-	@Schema(description = "수정자 정보", format = "수정자 명(수정자 아이디)")
+	@Schema(description = "수정자 정보", format = SwaggerConstant.USER_INFO_DEFAULT, example = SwaggerConstant.USER_INFO_EXAMPLE)
 	private String mdfrInfo;
 }
