@@ -1,6 +1,7 @@
 package org.bplte.core.api.config;
 
 import lombok.RequiredArgsConstructor;
+import org.bplte.core.api.config.filter.AuthAvailableUserIdRateLimitFilter;
 import org.bplte.core.api.config.filter.JwtAuthenticationEntryPoint;
 import org.bplte.core.api.config.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
@@ -21,7 +22,8 @@ import java.util.List;
 public class SecurityConfig {
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
 	private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-	
+	private final AuthAvailableUserIdRateLimitFilter authAvailableUserIdRateLimitFilter;
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf(AbstractHttpConfigurer::disable)
@@ -30,10 +32,10 @@ public class SecurityConfig {
 			.exceptionHandling(exceptions -> exceptions
 				.authenticationEntryPoint(jwtAuthenticationEntryPoint))
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/auth/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**")
-					.permitAll()
+				.requestMatchers("/auth/**", "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
 				.anyRequest().authenticated())
-			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+			.addFilterBefore(authAvailableUserIdRateLimitFilter, JwtAuthenticationFilter.class);
 		return http.build();
 	}
 	
