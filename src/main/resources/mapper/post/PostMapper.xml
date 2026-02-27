@@ -24,6 +24,41 @@
             , #{mdfrId}
         )
     </insert>
+
+    <update id="deletePost" parameterType="org.bplte.core.api.domain.post.entity.PostEntity">
+        UPDATE TBL_POST /* org.bplte.core.api.domain.post.mapper.PostMapper.deletePost */
+        SET DEL_YN = 'Y', MDFCN_DT = NOW(), MDFR_ID = #{mdfrId}
+        WHERE POST_NUMBER = #{postNumber}
+    </update>
+
+    <update id="updatePost" parameterType="org.bplte.core.api.domain.post.entity.PostEntity">
+        UPDATE TBL_POST /* org.bplte.core.api.domain.post.mapper.PostMapper.updatePost */
+        SET TITLE = #{title}, CONTENT = #{content}, SEARCH_CONTENT = #{searchContent}, MDFCN_DT = NOW(), MDFR_ID = #{mdfrId}
+        WHERE POST_NUMBER = #{postNumber}
+    </update>
+
+    <select id="selectPost"
+            parameterType="long"
+            resultType="org.bplte.core.api.domain.post.dto.response.PostDetailResponse">
+        SELECT /* org.bplte.core.api.domain.post.mapper.PostMapper.selectPost */
+              A.POST_NUMBER                                AS postNumber
+            , A.OWNER_USER_ID                              AS ownerUserId
+            , A.TITLE                                      AS title
+            , A.CONTENT                                    AS content
+            , A.SEARCH_CONTENT                             AS searchContent
+            , DATE_FORMAT(A.REG_DT, '%Y-%m-%d %H:%i:%s')   AS regDt
+            , A.RGTR_ID                                    AS rgtrId
+            , B.USER_NAME                                  AS rgtrName
+            , CONCAT(B.USER_NAME, '(', A.RGTR_ID, ')')     AS rgtrInfo
+            , DATE_FORMAT(A.MDFCN_DT, '%Y-%m-%d %H:%i:%s') AS mdfcnDt
+            , A.MDFR_ID                                    AS mdfrId
+            , C.USER_NAME                                  AS mdfrName
+            , CONCAT(C.USER_NAME, '(', A.MDFR_ID, ')')     AS mdfrInfo
+        FROM TBL_POST A
+        INNER JOIN TBL_USER B ON B.USER_ID = A.RGTR_ID
+        INNER JOIN TBL_USER C ON C.USER_ID = A.MDFR_ID
+        WHERE A.DEL_YN = 'N' AND A.POST_NUMBER = #{postNumber}
+    </select>
     
     <select id="selectPostListCount" resultType="int">
         SELECT /* org.bplte.core.api.domain.post.mapper.PostMapper.selectPostListCount */
@@ -48,9 +83,10 @@
             , C.USER_NAME                                  AS mdfrName
             , CONCAT(C.USER_NAME, '(', A.MDFR_ID, ')')     AS mdfrInfo
         FROM TBL_POST A
-        LEFT OUTER JOIN TBL_USER B ON B.USER_ID = A.RGTR_ID
-        LEFT OUTER JOIN TBL_USER C ON C.USER_ID = A.MDFR_ID
+        INNER JOIN TBL_USER B ON B.USER_ID = A.RGTR_ID
+        INNER JOIN TBL_USER C ON C.USER_ID = A.MDFR_ID
         WHERE A.DEL_YN = 'N'
+        ORDER BY A.REG_DT DESC, A.POST_NUMBER DESC
         LIMIT ${limit} OFFSET ${offset}
     </select>
 </mapper>

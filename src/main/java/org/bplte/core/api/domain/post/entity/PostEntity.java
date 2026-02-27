@@ -2,6 +2,8 @@ package org.bplte.core.api.domain.post.entity;
 
 import lombok.*;
 import org.bplte.core.api.domain.post.dto.request.PostCreateRequest;
+import org.bplte.core.api.domain.post.dto.request.PostDeleteRequest;
+import org.bplte.core.api.domain.post.dto.request.PostUpdateRequest;
 
 import java.time.LocalDateTime;
 
@@ -37,13 +39,30 @@ public class PostEntity {
 	
 	public static PostEntity createToEntity(PostCreateRequest request) {
 		return PostEntity.builder()
-				.ownerUserId(request.getRequestUserId())
-				.title(request.getTitle())
-				.content(request.getContent())
-				.searchContent(request.getSearchContent())
-				.delYn("N")
-				.rgtrId(request.getRequestUserId())
-				.mdfrId(request.getRequestUserId())
-				.build();
+			.ownerUserId(request.getRequestUserId())
+			.title(request.getTitle())
+			.content(request.getContent())
+			.searchContent(request.getSearchContent())
+			.delYn("N")
+			.rgtrId(request.getRequestUserId())
+			.mdfrId(request.getRequestUserId())
+			.build();
+	}
+
+	public static PostEntity deleteToEntity(PostDeleteRequest request) {
+		return PostEntity.builder()
+			.postNumber(request.getPostNumber())
+			.mdfrId(request.getMdfrId())
+			.build();
+	}
+
+	public static PostEntity updateToEntity(PostUpdateRequest request) {
+		return PostEntity.builder()
+			.postNumber(request.getPostNumber())
+			.title(request.getTitle())
+			.content(request.getContent())
+			.searchContent(request.getSearchContent())
+			.mdfrId(request.getMdfrId())
+			.build();
 	}
 }
