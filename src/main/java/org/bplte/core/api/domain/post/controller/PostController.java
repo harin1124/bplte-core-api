@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/posts")
 @RequiredArgsConstructor
-@Tag(name = "포스트 (PostController)")
+@Tag(name = "포스트")
 public class PostController {
 	private final PostService postService;
 	
