@@ -10,7 +10,6 @@
 
 ### 🏗️ 아키텍처
 - **[아키텍처 개요](architecture/README.md)** - 시스템 개요, 요청 흐름, 계층/패키지 구조
-- **데이터베이스 설계** - ERD 및 테이블 구조 (예정)
 - **[보안 설정 가이드](architecture/SECURITY.md)** - JWT, Spring Security 설정
 
 ---
