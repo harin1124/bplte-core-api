@@ -35,6 +35,13 @@ public class PostController {
 		return ApiResponse.success(postService.getPost(id));
 	}
 	
+	@PatchMapping("/{id}/view_count")
+	@Operation(summary = "포스트 조회 수 증가")
+	public ApiResponse<Void> updatePostViewCountUp(@PathVariable Long id) {
+		postService.updatePostViewCountUp(id);
+		return ApiResponse.success();
+	}
+	
 	@PostMapping
 	@Operation(summary = "포스트 등록")
 	public ApiResponse<Integer> createPost(

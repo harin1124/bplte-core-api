@@ -14,6 +14,8 @@ public interface PostMapper {
 	int deletePost(PostEntity post);
 	int updatePost(PostEntity post);
 	int selectPostListCount();
+	int updateInquiryCountUp(Long postNumber);
 	List<PostListResponse> selectPostList(PostListRequest param);
 	PostDetailResponse selectPost(Long postNumber);
+	PostEntity selectPostByPostNumber(Long postNumber);
 }

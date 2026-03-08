@@ -28,6 +28,9 @@ public class PostDetailResponse {
 
 	@Schema(description = "검색 내용")
 	private String searchContent;
+	
+	@Schema(description = "조회 수")
+	private int inqCnt;
 
 	@Schema(description = "등록 일시", format = SwaggerConstant.DATE_DEFAULT, example = SwaggerConstant.DATE_EXAMPLE)
 	private String regDt;

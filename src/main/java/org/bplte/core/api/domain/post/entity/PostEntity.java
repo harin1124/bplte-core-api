@@ -26,6 +26,8 @@ public class PostEntity {
 	private String content;
 	/** 검색 내용 */
 	private String searchContent;
+	/** 조회 수 */
+	private int inqCnt;
 	/** 삭제 여부 */
 	private String delYn;
 	/** 등록 일시 */

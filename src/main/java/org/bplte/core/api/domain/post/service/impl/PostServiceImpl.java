@@ -40,23 +40,42 @@ public class PostServiceImpl implements PostService {
 			.orElseThrow(() -> new ApiException(ResponseCodeGeneral.NOT_FOUND));
 	}
 	
+	public void updatePostViewCountUp(Long postNumber) {
+		int result = postMapper.updateInquiryCountUp(postNumber);
+		if(result == 0) {
+			throw new ApiException(ResponseCodeGeneral.NOT_FOUND);
+		}
+	}
+	
 	public int createPost(PostCreateRequest request) {
 		return postMapper.insertPost(PostEntity.createToEntity(request));
 	}
 
 	public int deletePost(PostDeleteRequest request) {
-		int result = postMapper.deletePost(PostEntity.deleteToEntity(request));
-		if(result == 0) {
+		PostEntity postInfo = postMapper.selectPostByPostNumber(request.getPostNumber());
+		
+		if(postInfo == null) {
 			throw new ApiException(ResponseCodeGeneral.NOT_FOUND);
 		}
-		return result;
+		
+		if(!postInfo.getOwnerUserId().equals(request.getMdfrId())){
+			throw new ApiException(ResponseCodeGeneral.FORBIDDEN);
+		}
+		
+		return postMapper.deletePost(PostEntity.deleteToEntity(request));
 	}
 
 	public int updatePost(PostUpdateRequest request) {
-		int result = postMapper.updatePost(PostEntity.updateToEntity(request));
-		if(result == 0) {
+		PostEntity postInfo = postMapper.selectPostByPostNumber(request.getPostNumber());
+		
+		if(postInfo == null) {
 			throw new ApiException(ResponseCodeGeneral.NOT_FOUND);
 		}
-		return result;
+		
+		if(!postInfo.getOwnerUserId().equals(request.getMdfrId())){
+			throw new ApiException(ResponseCodeGeneral.FORBIDDEN);
+		}
+		
+		return postMapper.updatePost(PostEntity.updateToEntity(request));
 	}
 }

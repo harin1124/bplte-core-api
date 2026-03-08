@@ -7,6 +7,7 @@
             , TITLE
             , CONTENT
             , SEARCH_CONTENT
+            , INQ_CNT
             , DEL_YN
             , REG_DT
             , RGTR_ID
@@ -17,6 +18,7 @@
             , #{title}
             , #{content}
             , #{searchContent}
+            , 0
             , 'N'
             , NOW()
             , #{rgtrId}
@@ -46,6 +48,7 @@
             , A.TITLE                                      AS title
             , A.CONTENT                                    AS content
             , A.SEARCH_CONTENT                             AS searchContent
+            , A.INQ_CNT                                    AS inqCnt
             , DATE_FORMAT(A.REG_DT, '%Y-%m-%d %H:%i:%s')   AS regDt
             , A.RGTR_ID                                    AS rgtrId
             , B.USER_NAME                                  AS rgtrName
@@ -58,6 +61,25 @@
         INNER JOIN TBL_USER B ON B.USER_ID = A.RGTR_ID
         INNER JOIN TBL_USER C ON C.USER_ID = A.MDFR_ID
         WHERE A.DEL_YN = 'N' AND A.POST_NUMBER = #{postNumber}
+    </select>
+    
+    <select id="selectPostByPostNumber"
+            parameterType="long"
+            resultType="org.bplte.core.api.domain.post.entity.PostEntity">
+        SELECT /* org.bplte.core.api.domain.post.mapper.PostMapper.selectPostByPostNumber */
+              POST_NUMBER      AS postNumber
+            , OWNER_USER_ID    AS ownerUserId
+            , TITLE            AS title
+            , CONTENT          AS content
+            , SEARCH_CONTENT   AS searchContent
+            , INQ_CNT          AS inqCnt
+            , DEL_YN           AS delYn
+            , REG_DT           AS regDt
+            , RGTR_ID          AS rgtrId
+            , MDFCN_DT         AS mdfcnDt
+            , MDFR_ID          AS mdfrId
+        FROM TBL_POST
+        WHERE POST_NUMBER = #{postNumber}
     </select>
     
     <select id="selectPostListCount" resultType="int">
@@ -74,6 +96,7 @@
               A.POST_NUMBER                                AS postNumber
             , A.OWNER_USER_ID                              AS ownerUserId
             , A.TITLE                                      AS title
+            , A.INQ_CNT                                    AS inqCnt
             , DATE_FORMAT(A.REG_DT, '%Y-%m-%d %H:%i:%s')   AS regDt
             , A.RGTR_ID                                    AS rgtrId
             , B.USER_NAME                                  AS rgtrName
@@ -89,4 +112,10 @@
         ORDER BY A.REG_DT DESC, A.POST_NUMBER DESC
         LIMIT ${limit} OFFSET ${offset}
     </select>
+    
+    <update id="updateInquiryCountUp" parameterType="long">
+        UPDATE TBL_POST /* org.bplte.core.api.domain.post.mapper.PostMapper.updateInquiryCountUp */
+        SET INQ_CNT = INQ_CNT + 1
+        WHERE POST_NUMBER = #{postNumber}
+    </update>
 </mapper>

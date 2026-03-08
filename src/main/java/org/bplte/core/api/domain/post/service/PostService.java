@@ -11,6 +11,7 @@ import org.bplte.core.api.domain.post.dto.response.PostListResponse;
 public interface PostService {
 	PaginationResponse<PostListResponse> getPosts(PostListRequest request);
 	PostDetailResponse getPost(Long postNumber);
+	void updatePostViewCountUp(Long postNumber);
 	int createPost(PostCreateRequest request);
 	int deletePost(PostDeleteRequest request);
 	int updatePost(PostUpdateRequest request);

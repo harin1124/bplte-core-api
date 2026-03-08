@@ -23,6 +23,9 @@ public class PostListResponse {
 	@Schema(description = "제목", minLength = 1, maxLength = 100)
 	private String title;
 	
+	@Schema(description = "조회 수")
+	private int inqCnt;
+	
 	@Schema(description = "등록 일시", format = SwaggerConstant.DATE_DEFAULT, example = SwaggerConstant.DATE_EXAMPLE)
 	private String regDt;
 	
