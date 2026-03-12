@@ -45,7 +45,7 @@ public class SecurityConfig {
 		CorsConfiguration config = new CorsConfiguration();
 		
 		config.addAllowedOriginPattern("*");
-		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // 허용할 HTTP 메서드
+		config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")); // 허용할 HTTP 메서드
 		config.setAllowedHeaders(List.of("*"));
 		config.setAllowCredentials(true);
 		
