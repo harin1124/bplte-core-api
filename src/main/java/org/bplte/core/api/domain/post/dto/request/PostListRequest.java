@@ -1,6 +1,9 @@
 package org.bplte.core.api.domain.post.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.bplte.core.api.core.dto.request.PaginationRequest;
 
@@ -9,5 +12,14 @@ import org.bplte.core.api.core.dto.request.PaginationRequest;
  */
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Schema(name = "[요청] 포스트 조회 (PostListRequest)")
 public class PostListRequest extends PaginationRequest {
+	@Schema(description = "제목 검색 키워드")
+	private String titleSearchKeyword;
+	@Schema(description = "등록자 아이디 검색 키워드")
+	private String rgtrIdSearchKeyword;
+	@Schema(description = "등록자 이름 검색 키워드")
+	private String rgtrNameSearchKeyword;
 }
