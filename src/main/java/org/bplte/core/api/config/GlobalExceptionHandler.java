@@ -44,6 +44,8 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
 	}
 
+	// TODO BindException.class 오류 핸들러 추가하기
+
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ApiResponse<Object>> handleException(Exception ex) {
 		ResponseCode code = ResponseCodeGeneral.UNKNOWN.getResponseCode();
