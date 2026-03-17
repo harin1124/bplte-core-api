@@ -25,7 +25,7 @@ public class PostServiceImpl implements PostService {
 	private final PostMapper postMapper;
 	
 	public PaginationResponse<PostListResponse> getPosts(PostListRequest request) {
-		int totalCount = postMapper.selectPostListCount();
+		int totalCount = postMapper.selectPostListCount(request);
 		List<PostListResponse> postList = new ArrayList<>(0);
 		
 		if(totalCount > 0) {

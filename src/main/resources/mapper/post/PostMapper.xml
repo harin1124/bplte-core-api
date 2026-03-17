@@ -81,12 +81,26 @@
         FROM TBL_POST
         WHERE POST_NUMBER = #{postNumber}
     </select>
+
+    <sql id="selectPostListSearchCondition">
+        <if test="titleSearchKeyword != null and titleSearchKeyword != ''">
+            AND A.TITLE LIKE CONCAT('%', #{titleSearchKeyword}, '%')
+        </if>
+        <if test="rgtrIdSearchKeyword != null and rgtrIdSearchKeyword != ''">
+            AND A.RGTR_ID = CONCAT('%', #{rgtrIdSearchKeyword}, '%')
+        </if>
+        <if test="rgtrNameSearchKeyword != null and rgtrNameSearchKeyword != ''">
+            AND B.USER_NAME = CONCAT('%', #{rgtrNameSearchKeyword}, '%')
+        </if>
+    </sql>
     
-    <select id="selectPostListCount" resultType="int">
+    <select id="selectPostListCount" parameterType="org.bplte.core.api.domain.post.dto.request.PostListRequest" resultType="int">
         SELECT /* org.bplte.core.api.domain.post.mapper.PostMapper.selectPostListCount */
             COUNT(*)
         FROM TBL_POST A
+        INNER JOIN TBL_USER B ON B.USER_ID = A.RGTR_ID
         WHERE A.DEL_YN = 'N'
+        <include refid="selectPostListSearchCondition"/>
     </select>
     
     <select id="selectPostList"
@@ -109,6 +123,7 @@
         INNER JOIN TBL_USER B ON B.USER_ID = A.RGTR_ID
         INNER JOIN TBL_USER C ON C.USER_ID = A.MDFR_ID
         WHERE A.DEL_YN = 'N'
+        <include refid="selectPostListSearchCondition"/>
         ORDER BY A.REG_DT DESC, A.POST_NUMBER DESC
         LIMIT ${limit} OFFSET ${offset}
     </select>
