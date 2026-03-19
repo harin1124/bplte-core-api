@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bplte.core.api.core.dto.response.PaginationResponse;
 import org.bplte.core.api.core.exception.ApiException;
 import org.bplte.core.api.core.message.ResponseCodeGeneral;
-import org.bplte.core.api.domain.post.dto.request.PostCreateRequest;
-import org.bplte.core.api.domain.post.dto.request.PostDeleteRequest;
-import org.bplte.core.api.domain.post.dto.request.PostListRequest;
-import org.bplte.core.api.domain.post.dto.request.PostUpdateRequest;
+import org.bplte.core.api.domain.post.dto.request.*;
 import org.bplte.core.api.domain.post.dto.response.PostDetailResponse;
 import org.bplte.core.api.domain.post.dto.response.PostListResponse;
 import org.bplte.core.api.domain.post.entity.PostEntity;
@@ -40,6 +37,10 @@ public class PostServiceImpl implements PostService {
 	public PostDetailResponse getPost(Long postNumber) {
 		return Optional.ofNullable(postMapper.selectPost(postNumber))
 			.orElseThrow(() -> new ApiException(ResponseCodeGeneral.NOT_FOUND));
+	}
+	
+	public List<PostListResponse> getMyPosts(MyPostListRequest request) {
+		return postMapper.selectMyPostList(request);
 	}
 	
 	public void updatePostViewCountUp(Long postNumber) {

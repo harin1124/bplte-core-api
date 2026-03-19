@@ -1,6 +1,7 @@
 package org.bplte.core.api.domain.post.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.bplte.core.api.domain.post.dto.request.MyPostListRequest;
 import org.bplte.core.api.domain.post.dto.request.PostListRequest;
 import org.bplte.core.api.domain.post.dto.response.PostDetailResponse;
 import org.bplte.core.api.domain.post.dto.response.PostListResponse;
@@ -16,6 +17,7 @@ public interface PostMapper {
 	int selectPostListCount(PostListRequest param);
 	int updateInquiryCountUp(Long postNumber);
 	List<PostListResponse> selectPostList(PostListRequest param);
+	List<PostListResponse> selectMyPostList(MyPostListRequest param);
 	PostDetailResponse selectPost(Long postNumber);
 	PostEntity selectPostByPostNumber(Long postNumber);
 }

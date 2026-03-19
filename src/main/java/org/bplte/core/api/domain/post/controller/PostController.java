@@ -7,14 +7,16 @@ import lombok.RequiredArgsConstructor;
 import org.bplte.core.api.config.annotation.CurrentUser;
 import org.bplte.core.api.core.ApiResponse;
 import org.bplte.core.api.core.dto.response.PaginationResponse;
-import org.bplte.core.api.domain.post.dto.request.PostCreateRequest;
-import org.bplte.core.api.domain.post.dto.request.PostDeleteRequest;
-import org.bplte.core.api.domain.post.dto.request.PostListRequest;
-import org.bplte.core.api.domain.post.dto.request.PostUpdateRequest;
+import org.bplte.core.api.core.exception.ApiException;
+import org.bplte.core.api.core.message.ResponseCodeGeneral;
+import org.bplte.core.api.domain.post.dto.request.*;
 import org.bplte.core.api.domain.post.dto.response.PostDetailResponse;
 import org.bplte.core.api.domain.post.dto.response.PostListResponse;
 import org.bplte.core.api.domain.post.service.PostService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
@@ -28,7 +30,18 @@ public class PostController {
 	public ApiResponse<PaginationResponse<PostListResponse>> getPosts(@ModelAttribute @Valid PostListRequest request) {
 		return ApiResponse.success(postService.getPosts(request));
 	}
-
+	
+	@GetMapping("/me")
+	@Operation(summary = "내가 작성한 포스트 목록 조회")
+	public ApiResponse<List<PostListResponse>> getMyPosts(
+			@RequestParam String userId,
+			@CurrentUser String currentUserId) {
+		if(!userId.equals(currentUserId)) {
+			throw new ApiException(ResponseCodeGeneral.FORBIDDEN);
+		}
+		return ApiResponse.success(postService.getMyPosts(new MyPostListRequest(currentUserId)));
+	}
+	
 	@GetMapping("/{id}")
 	@Operation(summary = "포스트 상세 조회")
 	public ApiResponse<PostDetailResponse> getPost(@PathVariable Long id) {
