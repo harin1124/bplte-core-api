@@ -21,8 +21,8 @@ public class PostListRequest extends PaginationRequest {
 	private String rgtrIdSearchKeyword;
 	@Schema(description = "등록자 이름 검색 키워드")
 	private String rgtrNameSearchKeyword;
-	@Schema(description = "정렬 컬럼 이름")
+	@Schema(description = "정렬 컬럼 이름(포스트 조회 응답 key와 동일)")
 	private String sortColumnName;
-	@Schema(description = "정렬 타입")
+	@Schema(description = "정렬 타입(ASC, DESC)", example = "ASC")
 	private SortType sortType;
 }

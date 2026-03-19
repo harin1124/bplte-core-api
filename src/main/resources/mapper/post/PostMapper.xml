@@ -107,25 +107,46 @@
             parameterType="org.bplte.core.api.domain.post.dto.request.PostListRequest"
             resultType="org.bplte.core.api.domain.post.dto.response.PostListResponse">
         SELECT /* org.bplte.core.api.domain.post.mapper.PostMapper.selectPostList */
-              A.POST_NUMBER                                AS postNumber
-            , A.OWNER_USER_ID                              AS ownerUserId
-            , A.TITLE                                      AS title
-            , A.INQ_CNT                                    AS inqCnt
-            , DATE_FORMAT(A.REG_DT, '%Y-%m-%d %H:%i:%s')   AS regDt
-            , A.RGTR_ID                                    AS rgtrId
-            , B.USER_NAME                                  AS rgtrName
-            , CONCAT(B.USER_NAME, '(', A.RGTR_ID, ')')     AS rgtrInfo
-            , DATE_FORMAT(A.MDFCN_DT, '%Y-%m-%d %H:%i:%s') AS mdfcnDt
-            , A.MDFR_ID                                    AS mdfrId
-            , C.USER_NAME                                  AS mdfrName
-            , CONCAT(C.USER_NAME, '(', A.MDFR_ID, ')')     AS mdfrInfo
-        FROM TBL_POST A
-        INNER JOIN TBL_USER B ON B.USER_ID = A.RGTR_ID
-        INNER JOIN TBL_USER C ON C.USER_ID = A.MDFR_ID
-        WHERE A.DEL_YN = 'N'
-        <include refid="selectPostListSearchCondition"/>
-        ORDER BY A.REG_DT DESC, A.POST_NUMBER DESC
-        LIMIT ${limit} OFFSET ${offset}
+              AA.POST_NUMBER    AS postNumber
+            , AA.OWNER_USER_ID  AS ownerUserId
+            , AA.TITLE          AS title
+            , AA.INQ_CNT        AS inqCnt
+            , AA.REG_DT         AS regDt
+            , AA.RGTR_ID        AS rgtrId
+            , AA.RGTR_NAME      AS rgtrName
+            , AA.RGTR_INFO      AS rgtrInfo
+            , AA.MDFCN_DT       AS mdfcnDt
+            , AA.MDFR_ID        AS mdfrId
+            , AA.MDFR_NAME      AS mdfrName
+            , AA.MDFR_INFO      AS mdfrInfo
+        FROM (
+            SELECT
+                  A.POST_NUMBER                                AS POST_NUMBER
+                , A.OWNER_USER_ID                              AS OWNER_USER_ID
+                , A.TITLE                                      AS TITLE
+                , A.INQ_CNT                                    AS INQ_CNT
+                , DATE_FORMAT(A.REG_DT, '%Y-%m-%d %H:%i:%s')   AS REG_DT
+                , A.RGTR_ID                                    AS RGTR_ID
+                , B.USER_NAME                                  AS RGTR_NAME
+                , CONCAT(B.USER_NAME, '(', A.RGTR_ID, ')')     AS RGTR_INFO
+                , DATE_FORMAT(A.MDFCN_DT, '%Y-%m-%d %H:%i:%s') AS MDFCN_DT
+                , A.MDFR_ID                                    AS MDFR_ID
+                , C.USER_NAME                                  AS MDFR_NAME
+                , CONCAT(C.USER_NAME, '(', A.MDFR_ID, ')')     AS MDFR_INFO
+                FROM TBL_POST A
+                INNER JOIN TBL_USER B ON B.USER_ID = A.RGTR_ID
+                INNER JOIN TBL_USER C ON C.USER_ID = A.MDFR_ID
+                WHERE A.DEL_YN = 'N'
+                <include refid="selectPostListSearchCondition"/>
+        ) AA
+        <if test="sortColumnName == null">
+            /* Default Sort */
+            ORDER BY AA.REG_DT DESC, AA.POST_NUMBER DESC
+        </if>
+        <if test="sortColumnName != null">
+            ORDER BY AA.${sortColumnName} ${sortType}
+        </if>
+        LIMIT #{limit} OFFSET #{offset}
     </select>
     
     <update id="updateInquiryCountUp" parameterType="long">

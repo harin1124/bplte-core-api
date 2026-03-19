@@ -11,6 +11,7 @@ import org.bplte.core.api.domain.post.dto.request.PostUpdateRequest;
 import org.bplte.core.api.domain.post.dto.response.PostDetailResponse;
 import org.bplte.core.api.domain.post.dto.response.PostListResponse;
 import org.bplte.core.api.domain.post.entity.PostEntity;
+import org.bplte.core.api.domain.post.enums.PostSortColumn;
 import org.bplte.core.api.domain.post.mapper.PostMapper;
 import org.bplte.core.api.domain.post.service.PostService;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class PostServiceImpl implements PostService {
 		List<PostListResponse> postList = new ArrayList<>(0);
 		
 		if(totalCount > 0) {
+			request.setSortColumnName(PostSortColumn.toDbColumn(request.getSortColumnName()));
 			postList = postMapper.selectPostList(request);
 		}
 		
