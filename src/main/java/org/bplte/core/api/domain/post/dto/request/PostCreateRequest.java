@@ -7,6 +7,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * [요청] 포스트 등록
@@ -28,4 +31,6 @@ public class PostCreateRequest {
 	private String searchContent;
 	@Schema(hidden = true)
 	private String requestUserId;
+	@Schema(description = "첨부파일")
+	private List<MultipartFile> attachFileList;
 }

@@ -14,8 +14,8 @@ import org.bplte.core.api.domain.post.dto.response.PostDetailResponse;
 import org.bplte.core.api.domain.post.dto.response.PostListResponse;
 import org.bplte.core.api.domain.post.service.PostService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -58,10 +58,16 @@ public class PostController {
 	@PostMapping
 	@Operation(summary = "포스트 등록")
 	public ApiResponse<Integer> createPost(
-			@RequestBody @Valid PostCreateRequest request,
+			@ModelAttribute @Valid PostCreateRequest request,
 			@CurrentUser String userId) {
 		request.setRequestUserId(userId);
-		return ApiResponse.success(postService.createPost(request));
+		
+		for(MultipartFile file : request.getAttachFileList()) {
+			System.out.println("file ::: "+file.getOriginalFilename());
+		}
+		
+		// postService.createPost(request)
+		return ApiResponse.success();
 	}
 
 	@PutMapping("/{id}")
