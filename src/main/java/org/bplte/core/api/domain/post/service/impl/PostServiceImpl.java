@@ -4,6 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.bplte.core.api.core.dto.response.PaginationResponse;
 import org.bplte.core.api.core.exception.ApiException;
 import org.bplte.core.api.core.message.ResponseCodeGeneral;
+import org.bplte.core.api.domain.file.entity.FileEntity;
+import org.bplte.core.api.domain.file.enums.FileRefType;
+import org.bplte.core.api.domain.file.enums.FileRoleType;
+import org.bplte.core.api.domain.file.service.FileService;
 import org.bplte.core.api.domain.post.dto.request.*;
 import org.bplte.core.api.domain.post.dto.response.PostDetailResponse;
 import org.bplte.core.api.domain.post.dto.response.PostListResponse;
@@ -12,6 +16,7 @@ import org.bplte.core.api.domain.post.enums.PostSortColumn;
 import org.bplte.core.api.domain.post.mapper.PostMapper;
 import org.bplte.core.api.domain.post.service.PostService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 	private final PostMapper postMapper;
+	private final FileService fileService;
 	
 	public PaginationResponse<PostListResponse> getPosts(PostListRequest request) {
 		int totalCount = postMapper.selectPostListCount(request);
@@ -49,9 +55,24 @@ public class PostServiceImpl implements PostService {
 			throw new ApiException(ResponseCodeGeneral.NOT_FOUND);
 		}
 	}
-	
+
+	@Transactional
 	public int createPost(PostCreateRequest request) {
-		return postMapper.insertPost(PostEntity.createToEntity(request));
+		PostEntity postEntity = PostEntity.createToEntity(request);
+		int result = postMapper.insertPost(postEntity);
+
+		if(request.getAttachFileList() != null && !request.getAttachFileList().isEmpty()) {
+			List<FileEntity> fileList = fileService.fileListPhysicsSave(
+				request.getAttachFileList(),
+				postEntity.getPostNumber().toString(),
+				request.getRequestUserId(),
+				FileRefType.POST_ATTACHMENT,
+				FileRoleType.ORIGINAL
+			);
+			fileService.fileListLogicSave(fileList);
+		}
+
+		return result;
 	}
 
 	public int deletePost(PostDeleteRequest request) {

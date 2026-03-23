@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.bplte.core.api.domain.post.mapper.PostMapper">
-    <insert id="insertPost" parameterType="org.bplte.core.api.domain.post.entity.PostEntity">
+    <insert id="insertPost"
+            parameterType="org.bplte.core.api.domain.post.entity.PostEntity"
+            useGeneratedKeys="true"
+            keyProperty="postNumber"
+            keyColumn="POST_NUMBER">
         INSERT INTO TBL_POST ( /* org.bplte.core.api.domain.post.mapper.PostMapper.insertPost */
               OWNER_USER_ID
             , TITLE
