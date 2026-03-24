@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bplte.core.api.core.exception.ApiException;
 import org.bplte.core.api.core.message.ResponseCodeGeneral;
+import org.bplte.core.api.domain.file.dto.request.FileListRequest;
 import org.bplte.core.api.domain.file.entity.FileEntity;
 import org.bplte.core.api.domain.file.enums.FileRefType;
 import org.bplte.core.api.domain.file.enums.FileRoleType;
@@ -32,7 +33,17 @@ public class FileServiceImpl implements FileService {
 	private String ROOT_PATH;
 
 	@Override
-	public List<FileEntity> fileListPhysicsSave(List<MultipartFile> fileList, String refId, String rgtrId, FileRefType refType, FileRoleType roleType) {
+	public void saveFileList(List<MultipartFile> fileList, String refId, String rgtrId, FileRefType refType, FileRoleType roleType) {
+		List<FileEntity> fileEntityList = fileListPhysicsSave(fileList, refId, rgtrId, refType, roleType);
+		fileListLogicSave(fileEntityList);
+	}
+
+	@Override
+	public List<FileEntity> selectFileList(FileListRequest param) {
+		return fileMapper.selectFileList(param);
+	}
+
+	private List<FileEntity> fileListPhysicsSave(List<MultipartFile> fileList, String refId, String rgtrId, FileRefType refType, FileRoleType roleType) {
 		List<FileEntity> fileInfoList = new ArrayList<>(fileList.size());
 		int sortOrder = 1;
 
@@ -88,8 +99,7 @@ public class FileServiceImpl implements FileService {
 		return fileInfoList;
 	}
 
-	@Override
-	public int fileListLogicSave(List<FileEntity> fileList) {
-		return fileMapper.insertFileList(fileList);
+	private void fileListLogicSave(List<FileEntity> fileList) {
+		fileMapper.insertFileList(fileList);
 	}
 }

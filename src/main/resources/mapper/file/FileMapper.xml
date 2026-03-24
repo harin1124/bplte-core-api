@@ -35,4 +35,36 @@
             )
         </foreach>
     </insert>
+
+    <select id="selectFileList"
+            parameterType="org.bplte.core.api.domain.file.dto.request.FileListRequest"
+            resultType="org.bplte.core.api.domain.file.entity.FileEntity">
+        SELECT /* org.bplte.core.api.domain.file.mapper.FileMapper.selectFileList */
+              FILE_ID        AS fileId
+            , ORIGINAL_NAME  AS originalName
+            , STORED_NAME    AS storedName
+            , STORED_PATH    AS storedPath
+            , EXTENSION      AS extension
+            , REF_TYPE       AS refType
+            , REF_ID         AS refId
+            , SORT_ORDER     AS sortOrder
+            , ROLE_TYPE      AS roleType
+            , DEL_YN         AS delYn
+            , REG_DT         AS regDt
+            , RGTR_ID        AS rgtrId
+            , MDFCN_DT       AS mdfcnDt
+            , MDFR_ID        AS mdfrId
+        FROM TBL_FILE
+        WHERE DEL_YN = 'N'
+        <if test="refType != null">
+            AND REF_TYPE = #{refType.code}
+        </if>
+        <if test="refId != null and refId != ''">
+            AND REF_ID = #{refId}
+        </if>
+        <if test="roleType != null">
+            AND ROLE_TYPE = #{roleType.code}
+        </if>
+        ORDER BY SORT_ORDER ASC
+    </select>
 </mapper>

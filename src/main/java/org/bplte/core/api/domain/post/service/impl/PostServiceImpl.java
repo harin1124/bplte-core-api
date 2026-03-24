@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.bplte.core.api.core.dto.response.PaginationResponse;
 import org.bplte.core.api.core.exception.ApiException;
 import org.bplte.core.api.core.message.ResponseCodeGeneral;
+import org.bplte.core.api.domain.file.dto.request.FileListRequest;
+import org.bplte.core.api.domain.file.dto.response.PostFileListResponse;
 import org.bplte.core.api.domain.file.entity.FileEntity;
 import org.bplte.core.api.domain.file.enums.FileRefType;
 import org.bplte.core.api.domain.file.enums.FileRoleType;
@@ -27,7 +29,8 @@ import java.util.Optional;
 public class PostServiceImpl implements PostService {
 	private final PostMapper postMapper;
 	private final FileService fileService;
-	
+
+	@Override
 	public PaginationResponse<PostListResponse> getPosts(PostListRequest request) {
 		int totalCount = postMapper.selectPostListCount(request);
 		List<PostListResponse> postList = new ArrayList<>(0);
@@ -40,15 +43,37 @@ public class PostServiceImpl implements PostService {
 		return PaginationResponse.of(request.getSize(), totalCount, postList);
 	}
 
+	@Override
 	public PostDetailResponse getPost(Long postNumber) {
 		return Optional.ofNullable(postMapper.selectPost(postNumber))
 			.orElseThrow(() -> new ApiException(ResponseCodeGeneral.NOT_FOUND));
 	}
-	
+
+	@Override
+	public List<PostFileListResponse> getPostFiles(Long postNumber) {
+		FileListRequest request = new FileListRequest();
+		request.setRefId(postNumber.toString());
+		request.setRefType(FileRefType.POST_ATTACHMENT);
+		List<FileEntity> fileEntityList = fileService.selectFileList(request);
+
+		List<PostFileListResponse> fileList = new ArrayList<>(fileEntityList.size());
+		for(FileEntity entity : fileEntityList) {
+			PostFileListResponse response = new PostFileListResponse();
+			response.setFileId(entity.getFileId());
+			response.setFileName(entity.getOriginalName() + "." + entity.getExtension());
+			response.setSortOrder(entity.getSortOrder());
+			fileList.add(response);
+		}
+
+		return fileList;
+	}
+
+	@Override
 	public List<PostListResponse> getMyPosts(MyPostListRequest request) {
 		return postMapper.selectMyPostList(request);
 	}
-	
+
+	@Override
 	public void updatePostViewCountUp(Long postNumber) {
 		int result = postMapper.updateInquiryCountUp(postNumber);
 		if(result == 0) {
@@ -56,25 +81,25 @@ public class PostServiceImpl implements PostService {
 		}
 	}
 
+	@Override
 	@Transactional
 	public int createPost(PostCreateRequest request) {
 		PostEntity postEntity = PostEntity.createToEntity(request);
 		int result = postMapper.insertPost(postEntity);
 
 		if(request.getAttachFileList() != null && !request.getAttachFileList().isEmpty()) {
-			List<FileEntity> fileList = fileService.fileListPhysicsSave(
-				request.getAttachFileList(),
+			fileService.saveFileList(request.getAttachFileList(),
 				postEntity.getPostNumber().toString(),
 				request.getRequestUserId(),
 				FileRefType.POST_ATTACHMENT,
 				FileRoleType.ORIGINAL
 			);
-			fileService.fileListLogicSave(fileList);
 		}
 
 		return result;
 	}
 
+	@Override
 	public int deletePost(PostDeleteRequest request) {
 		PostEntity postInfo = postMapper.selectPostByPostNumber(request.getPostNumber());
 		
@@ -89,6 +114,7 @@ public class PostServiceImpl implements PostService {
 		return postMapper.deletePost(PostEntity.deleteToEntity(request));
 	}
 
+	@Override
 	public int updatePost(PostUpdateRequest request) {
 		PostEntity postInfo = postMapper.selectPostByPostNumber(request.getPostNumber());
 		

@@ -9,6 +9,7 @@ import org.bplte.core.api.core.ApiResponse;
 import org.bplte.core.api.core.dto.response.PaginationResponse;
 import org.bplte.core.api.core.exception.ApiException;
 import org.bplte.core.api.core.message.ResponseCodeGeneral;
+import org.bplte.core.api.domain.file.dto.response.PostFileListResponse;
 import org.bplte.core.api.domain.post.dto.request.*;
 import org.bplte.core.api.domain.post.dto.response.PostDetailResponse;
 import org.bplte.core.api.domain.post.dto.response.PostListResponse;
@@ -45,6 +46,12 @@ public class PostController {
 	@Operation(summary = "포스트 상세 조회")
 	public ApiResponse<PostDetailResponse> getPost(@PathVariable Long id) {
 		return ApiResponse.success(postService.getPost(id));
+	}
+
+	@GetMapping("/{id}/files")
+	@Operation(summary = "포스트 상세 첨부파일 조회")
+	public ApiResponse<List<PostFileListResponse>> getPostFiles(@PathVariable Long id) {
+		return ApiResponse.success(postService.getPostFiles(id));
 	}
 	
 	@PatchMapping("/{id}/view_count")
