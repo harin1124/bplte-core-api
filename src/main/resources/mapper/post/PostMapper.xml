@@ -91,10 +91,10 @@
             AND A.TITLE LIKE CONCAT('%', #{titleSearchKeyword}, '%')
         </if>
         <if test="rgtrIdSearchKeyword != null and rgtrIdSearchKeyword != ''">
-            AND A.RGTR_ID = CONCAT('%', #{rgtrIdSearchKeyword}, '%')
+            AND A.RGTR_ID LIKE CONCAT('%', #{rgtrIdSearchKeyword}, '%')
         </if>
         <if test="rgtrNameSearchKeyword != null and rgtrNameSearchKeyword != ''">
-            AND B.USER_NAME = CONCAT('%', #{rgtrNameSearchKeyword}, '%')
+            AND B.USER_NAME LIKE CONCAT('%', #{rgtrNameSearchKeyword}, '%')
         </if>
     </sql>
     
