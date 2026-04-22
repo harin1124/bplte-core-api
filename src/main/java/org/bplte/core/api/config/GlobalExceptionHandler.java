@@ -52,6 +52,8 @@ public class GlobalExceptionHandler {
 		String detailMessage = code.getResultDetailMessage();
 		if (isLocalProfile()) {
 			detailMessage = ex.getClass().getSimpleName();
+			log.info("[ 오류 발생 ]");
+			log.info(ex.getMessage());
 		}
 		ApiResponse<Object> body = ApiResponse.builder()
 				.resultCode(code.getResultCode())

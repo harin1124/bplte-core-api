@@ -31,4 +31,6 @@ public class PostCreateRequest {
 	private String requestUserId;
 	@Schema(description = "첨부파일")
 	private List<MultipartFile> attachFileList;
+	@Schema(description = "첨부파일 저장 순서. 확장자 포함 파일명을 sort_order대로 나열")
+	private List<String> attachFileOrderList;
 }

@@ -5,6 +5,7 @@ import org.bplte.core.api.core.dto.response.PaginationResponse;
 import org.bplte.core.api.core.exception.ApiException;
 import org.bplte.core.api.core.message.ResponseCodeGeneral;
 import org.bplte.core.api.domain.file.dto.request.FileListRequest;
+import org.bplte.core.api.domain.file.dto.request.SaveFileListInput;
 import org.bplte.core.api.domain.file.dto.response.PostFileListResponse;
 import org.bplte.core.api.domain.file.entity.FileEntity;
 import org.bplte.core.api.domain.file.enums.FileRefType;
@@ -88,12 +89,15 @@ public class PostServiceImpl implements PostService {
 		int result = postMapper.insertPost(postEntity);
 
 		if(request.getAttachFileList() != null && !request.getAttachFileList().isEmpty()) {
-			fileService.saveFileList(request.getAttachFileList(),
-				postEntity.getPostNumber().toString(),
-				request.getRequestUserId(),
-				FileRefType.POST_ATTACHMENT,
-				FileRoleType.ORIGINAL
-			);
+			SaveFileListInput param = new SaveFileListInput();
+			param.setFileList(request.getAttachFileList());
+			param.setFileNameOrderList(request.getAttachFileOrderList());
+			param.setRefId(postEntity.getPostNumber().toString());
+			param.setRgtrId(request.getRequestUserId());
+			param.setRefType(FileRefType.POST_ATTACHMENT);
+			param.setRoleType(FileRoleType.ORIGINAL);
+
+			fileService.saveFileList(param);
 		}
 
 		return result;
