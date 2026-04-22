@@ -16,12 +16,7 @@ import org.bplte.core.api.domain.post.dto.response.PostListResponse;
 import org.bplte.core.api.domain.post.service.PostService;
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 @RestController
 @RequestMapping("/posts")
@@ -70,63 +65,9 @@ public class PostController {
 	@Operation(summary = "포스트 등록")
 	public ApiResponse<Integer> createPost(
 			@ModelAttribute @Valid PostCreateRequest request,
-			HttpServletRequest httpRequest,
 			@CurrentUser String userId) {
 		request.setRequestUserId(userId);
-		applyAttachFileOrderListFromRawRequest(request, httpRequest);
 		return ApiResponse.success(postService.createPost(request));
-	}
-
-	/**
-	 * multipart에서 {@code attachFileOrderList[n]} 형태는 {@code @ModelAttribute}만으로 비는 경우가 있어,
-	 * 서블릿 파라미터 맵에서 직접 읽어 덮어쓴다.
-	 */
-	private static void applyAttachFileOrderListFromRawRequest(PostCreateRequest request, HttpServletRequest http) {
-		List<String> indexed = parseIndexedFormFieldTexts(http, "attachFileOrderList");
-		if (!indexed.isEmpty()) {
-			request.setAttachFileOrderList(indexed);
-			return;
-		}
-		String[] flat = http.getParameterValues("attachFileOrderList");
-		if (flat == null) {
-			return;
-		}
-		List<String> list = Arrays.stream(flat)
-			.filter(v -> v != null && !v.isBlank())
-			.toList();
-		if (!list.isEmpty()) {
-			request.setAttachFileOrderList(new ArrayList<>(list));
-		}
-	}
-
-	private static List<String> parseIndexedFormFieldTexts(HttpServletRequest http, String baseName) {
-		TreeMap<Integer, String> sorted = new TreeMap<>();
-		for (Map.Entry<String, String[]> e : http.getParameterMap().entrySet()) {
-			String key = e.getKey();
-			if (!key.startsWith(baseName) || key.length() <= baseName.length()) {
-				continue;
-			}
-			if (key.charAt(baseName.length()) != '[' || !key.endsWith("]")) {
-				continue;
-			}
-			String indexPart = key.substring(baseName.length() + 1, key.length() - 1);
-			int idx;
-			try {
-				idx = Integer.parseInt(indexPart);
-			} catch (NumberFormatException ex) {
-				continue;
-			}
-			String[] vals = e.getValue();
-			if (vals == null || vals.length == 0) {
-				continue;
-			}
-			String v = vals[0];
-			if (v == null || v.isBlank()) {
-				continue;
-			}
-			sorted.put(idx, v);
-		}
-		return new ArrayList<>(sorted.values());
 	}
 
 	@PutMapping("/{id}")
