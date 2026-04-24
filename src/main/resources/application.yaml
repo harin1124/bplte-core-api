@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: bplte-core-api
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 5MB
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: ${DB_URL}?allowMultiQueries=true
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  flyway:
+    locations: classpath:db/migration
+    baseline-on-migrate: true # flyway_schema_history 테이블을 자동으로 생성할지 여부
+    baseline-version: 0 # 최초 버전 정보
+
+server:
+  port: 8081
+  servlet:
+    context-path: /bplte/core
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION}
+  refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION}
+
+file:
+  root: /
