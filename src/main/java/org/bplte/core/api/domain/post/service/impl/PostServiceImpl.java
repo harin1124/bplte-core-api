@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.bplte.core.api.core.dto.response.PaginationResponse;
 import org.bplte.core.api.core.exception.ApiException;
 import org.bplte.core.api.core.message.ResponseCodeGeneral;
+import org.bplte.core.api.domain.file.dto.request.DeleteFileListInput;
 import org.bplte.core.api.domain.file.dto.request.FileListRequest;
 import org.bplte.core.api.domain.file.dto.request.SaveFileListInput;
 import org.bplte.core.api.domain.file.dto.response.PostFileListResponse;
@@ -119,6 +120,7 @@ public class PostServiceImpl implements PostService {
 	}
 
 	@Override
+	@Transactional
 	public int updatePost(PostUpdateRequest request) {
 		PostEntity postInfo = postMapper.selectPostByPostNumber(request.getPostNumber());
 		
@@ -126,10 +128,44 @@ public class PostServiceImpl implements PostService {
 			throw new ApiException(ResponseCodeGeneral.NOT_FOUND);
 		}
 		
-		if(!postInfo.getOwnerUserId().equals(request.getMdfrId())){
+		if(!postInfo.getOwnerUserId().equals(request.getMdfrId())) {
 			throw new ApiException(ResponseCodeGeneral.FORBIDDEN);
 		}
-		
+
+		// 삭제 파일 처리
+		if(request.getDeleteFileIdList() != null && !request.getDeleteFileIdList().isEmpty()) {
+			DeleteFileListInput deleteParam = DeleteFileListInput.builder()
+				.refType(FileRefType.POST_ATTACHMENT)
+				.refId(request.getPostNumber().toString())
+				.fileIdList(request.getDeleteFileIdList())
+				.mdfrId(request.getMdfrId())
+				.build();
+			fileService.deleteFileList(deleteParam);
+		}
+
+		// 신규 등록 파일 처리 (최종 순서는 attachFileOrderList 기반 재정렬에서 반영)
+		boolean hasNewAttach = request.getAddAttachFileList() != null && !request.getAddAttachFileList().isEmpty();
+		if (hasNewAttach) {
+			SaveFileListInput saveParam = new SaveFileListInput();
+			saveParam.setFileList(request.getAddAttachFileList());
+			saveParam.setFileNameOrderList(null);
+			saveParam.setRefId(request.getPostNumber().toString());
+			saveParam.setRgtrId(request.getMdfrId());
+			saveParam.setRefType(FileRefType.POST_ATTACHMENT);
+			saveParam.setRoleType(FileRoleType.ORIGINAL);
+			fileService.saveFileList(saveParam);
+		}
+
+		boolean hasAttachOrder = request.getAttachFileOrderList() != null && !request.getAttachFileOrderList().isEmpty();
+		if (hasAttachOrder) {
+			fileService.reorderFilesByOriginalName(
+				FileRefType.POST_ATTACHMENT,
+				request.getPostNumber().toString(),
+				FileRoleType.ORIGINAL,
+				request.getAttachFileOrderList(),
+				request.getMdfrId());
+		}
+
 		return postMapper.updatePost(PostEntity.updateToEntity(request));
 	}
 }

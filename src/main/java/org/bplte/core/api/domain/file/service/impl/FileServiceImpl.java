@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bplte.core.api.core.exception.ApiException;
 import org.bplte.core.api.core.message.ResponseCodeGeneral;
+import org.bplte.core.api.domain.file.dto.request.DeleteFileListInput;
 import org.bplte.core.api.domain.file.dto.request.FileListRequest;
 import org.bplte.core.api.domain.file.dto.request.SaveFileListInput;
 import org.bplte.core.api.domain.file.entity.FileEntity;
@@ -56,8 +57,36 @@ public class FileServiceImpl implements FileService {
 			param.getRefType(),
 			param.getRoleType());
 
-		applySortOrderByFileNameOrder(fileEntityList, param.getFileNameOrderList());
+		applySortOrderByFileNameOrder(fileEntityList, param.getFileNameOrderList(), false);
 		fileListLogicSave(fileEntityList);
+	}
+
+	@Override
+	public void deleteFileList(DeleteFileListInput param) {
+		if (param.getFileIdList() == null || param.getFileIdList().isEmpty()) {
+			return;
+		}
+		fileMapper.deleteFileList(param);
+	}
+
+	@Override
+	public void reorderFilesByOriginalName(FileRefType refType, String refId, FileRoleType roleType, List<String> fileNameOrderList, String mdfrId) {
+		if (fileNameOrderList == null || fileNameOrderList.isEmpty()) {
+			return;
+		}
+		FileListRequest listRequest = new FileListRequest();
+		listRequest.setRefType(refType);
+		listRequest.setRefId(refId);
+		listRequest.setRoleType(roleType);
+		List<FileEntity> existing = fileMapper.selectFileList(listRequest);
+		if (existing.isEmpty()) {
+			throw new ApiException(ResponseCodeGeneral.BAD_REQUEST);
+		}
+		applySortOrderByFileNameOrder(existing, fileNameOrderList, true);
+		for (FileEntity entity : existing) {
+			entity.setMdfrId(mdfrId);
+			fileMapper.updateFileSortOrder(entity);
+		}
 	}
 
 	/**
@@ -185,13 +214,17 @@ public class FileServiceImpl implements FileService {
 	 * 매칭 키는 확장자를 포함한 파일명({@code originalName + "." + extension})과 목록 문자열을
 	 * 경로 제거·베이스네임·유니코드 NFC 정규화 후 동등 비교한다(폼 텍스트와 멀티파트 원본명의 NFD/NFC 차이 보정).
 	 * {@code fileNameOrderList}가 {@code null}이거나 비어 있으면 {@code fileEntityList}의 현재 순서대로 부여한다.
-	 * 목록에 없거나 매칭되지 않은 엔티티는 남은 순번으로 뒤에 배정된다.
+	 * 목록에 없거나 매칭되지 않은 엔티티는 남은 순번으로 뒤에 배정된다(strict 모드에서는 허용하지 않음).
 	 *
 	 * @param fileEntityList 정렬 순서를 채울 파일 엔티티 목록
 	 * @param fileNameOrderList 원하는 저장 순서의 확장자 포함 파일명 목록; 생략 시 업로드 목록 순서 사용
+	 * @param strict {@code true}이면 목록의 각 이름은 반드시 매칭되어야 하고, 매칭 후 남는 엔티티도 없어야 함
 	 */
-	private void applySortOrderByFileNameOrder(List<FileEntity> fileEntityList, List<String> fileNameOrderList) {
+	private void applySortOrderByFileNameOrder(List<FileEntity> fileEntityList, List<String> fileNameOrderList, boolean strict) {
 		if (fileNameOrderList == null || fileNameOrderList.isEmpty()) {
+			if (strict) {
+				throw new ApiException(ResponseCodeGeneral.BAD_REQUEST);
+			}
 			int order = 1;
 			for (FileEntity entity : fileEntityList) {
 				entity.setSortOrder(order++);
@@ -204,12 +237,21 @@ public class FileServiceImpl implements FileService {
 
 		for (String orderedName : fileNameOrderList) {
 			FileEntity matched = removeFirstMatchingEntity(pool, orderedName);
-			if (matched != null) {
-				matched.setSortOrder(sortOrder++);
+			if (matched == null) {
+				if (strict) {
+					throw new ApiException(ResponseCodeGeneral.BAD_REQUEST);
+				}
+				continue;
 			}
+			matched.setSortOrder(sortOrder++);
 		}
-		for (FileEntity remaining : pool) {
-			remaining.setSortOrder(sortOrder++);
+		if (!pool.isEmpty()) {
+			if (strict) {
+				throw new ApiException(ResponseCodeGeneral.BAD_REQUEST);
+			}
+			for (FileEntity remaining : pool) {
+				remaining.setSortOrder(sortOrder++);
+			}
 		}
 	}
 

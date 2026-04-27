@@ -36,6 +36,21 @@
         </foreach>
     </insert>
 
+    <update id="deleteFileList" parameterType="org.bplte.core.api.domain.file.dto.request.DeleteFileListInput">
+        UPDATE TBL_FILE /* org.bplte.core.api.domain.file.mapper.FileMapper.deleteFileList */
+        SET DEL_YN = 'Y'
+          , MDFCN_DT = NOW()
+          , MDFR_ID = #{mdfrId}
+        WHERE REF_TYPE = #{refType.code}
+          AND REF_ID = #{refId}
+          <if test="fileIdList != null and fileIdList.size() > 0">
+              AND FILE_ID IN
+              <foreach collection="fileIdList" item="fileId" open="(" separator="," close=")">
+                  #{fileId}
+              </foreach>
+          </if>
+    </update>
+
     <select id="selectFileList"
             parameterType="org.bplte.core.api.domain.file.dto.request.FileListRequest"
             resultType="org.bplte.core.api.domain.file.entity.FileEntity">
@@ -67,4 +82,13 @@
         </if>
         ORDER BY SORT_ORDER ASC
     </select>
+
+    <update id="updateFileSortOrder" parameterType="org.bplte.core.api.domain.file.entity.FileEntity">
+        UPDATE TBL_FILE /* org.bplte.core.api.domain.file.mapper.FileMapper.updateFileSortOrder */
+        SET SORT_ORDER = #{sortOrder}
+          , MDFCN_DT = NOW()
+          , MDFR_ID = #{mdfrId}
+        WHERE FILE_ID = #{fileId}
+          AND DEL_YN = 'N'
+    </update>
 </mapper>

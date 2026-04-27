@@ -74,7 +74,7 @@ public class PostController {
 	@Operation(summary = "포스트 수정")
 	public ApiResponse<Integer> updatePost(
 			@PathVariable Long id,
-			@RequestBody @Valid PostUpdateRequest request,
+			@ModelAttribute @Valid PostUpdateRequest request,
 			@CurrentUser String userId) {
 		request.setPostNumber(id);
 		request.setMdfrId(userId);
