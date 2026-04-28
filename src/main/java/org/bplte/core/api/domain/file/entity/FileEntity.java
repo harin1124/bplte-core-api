@@ -26,6 +26,8 @@ public class FileEntity {
 	private String storedPath;
 	/** 확장자 */
 	private String extension;
+	/** 파일 사이즈(바이트) */
+	private long fileSize;
 	/** 참조 구분 */
 	private FileRefType refType;
 	/** 참조 아이디 */

@@ -17,6 +17,8 @@ public class PostFileListResponse {
 	private long fileId;
 	@Schema(description = "파일 이름")
 	private String fileName;
+	@Schema(description = "파일 사이즈 (바이트 단위)")
+	private long fileSize;
 	@Schema(description = "정렬 순서")
 	private int sortOrder;
 }

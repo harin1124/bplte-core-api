@@ -162,6 +162,7 @@ public class FileServiceImpl implements FileService {
 			fileEntity.setStoredName(storedName);
 			fileEntity.setStoredPath(uniquePath);
 			fileEntity.setExtension(extensionName);
+			fileEntity.setFileSize(file.getSize());
 			fileEntity.setRefType(refType);
 			fileEntity.setRefId(refId);
 			fileEntity.setRoleType(roleType);

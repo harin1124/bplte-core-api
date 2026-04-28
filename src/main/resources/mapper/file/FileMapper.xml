@@ -7,6 +7,7 @@
             , STORED_NAME
             , STORED_PATH
             , EXTENSION
+            , FILE_SIZE
             , REF_TYPE
             , REF_ID
             , SORT_ORDER
@@ -23,6 +24,7 @@
                 , #{item.storedName}
                 , #{item.storedPath}
                 , #{item.extension}
+                , #{item.fileSize}
                 , #{item.refType.code}
                 , #{item.refId}
                 , #{item.sortOrder}
@@ -60,6 +62,7 @@
             , STORED_NAME    AS storedName
             , STORED_PATH    AS storedPath
             , EXTENSION      AS extension
+            , FILE_SIZE      AS fileSize
             , REF_TYPE       AS refType
             , REF_ID         AS refId
             , SORT_ORDER     AS sortOrder

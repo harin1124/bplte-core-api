@@ -63,6 +63,7 @@ public class PostServiceImpl implements PostService {
 			PostFileListResponse response = new PostFileListResponse();
 			response.setFileId(entity.getFileId());
 			response.setFileName(entity.getOriginalName() + "." + entity.getExtension());
+			response.setFileSize(entity.getFileSize());
 			response.setSortOrder(entity.getSortOrder());
 			fileList.add(response);
 		}
