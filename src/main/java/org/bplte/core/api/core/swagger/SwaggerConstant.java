@@ -5,4 +5,6 @@ public class SwaggerConstant {
 	public static final String DATE_EXAMPLE = "2026-10-02 11:15:00";
 	public static final String USER_INFO_DEFAULT = "사용자 이름(사용자 아이디)";
 	public static final String USER_INFO_EXAMPLE = "사용자1(user1)";
+	public static final String YN_DEFAULT = "^[YN]$";
+	public static final String YN_EXAMPLE = "N";
 }

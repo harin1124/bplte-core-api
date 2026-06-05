@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.bplte.core.api.domain.comment.mapper.CommentMapper">
+    <select id="selectCommentList"
+            parameterType="org.bplte.core.api.domain.comment.dto.request.CommentDetailRequest"
+            resultType="org.bplte.core.api.domain.comment.dto.response.CommentDetailResponse">
+        SELECT /* org.bplte.core.api.domain.comment.mapper.CommentMapper.selectCommentList */
+              A.COMMENT_ID                                 AS commentId
+            , A.POST_NUMBER                                AS postNumber
+            , A.PARENT_COMMENT_ID                          AS parentCommentId
+            , A.ROOT_COMMENT_ID                            AS rootCommentId
+            , A.DEPTH                                      AS depth
+            , CASE WHEN A.DEL_YN = 'Y'                                      THEN NULL
+                   WHEN A.SECRET_YN = 'Y' AND A.RGTR_ID != #{requestUserId} THEN NULL
+                   ELSE A.CONTENT
+              END                                          AS content
+            , A.LIKE_CNT                                   AS likeCnt
+            , A.DISLIKE_CNT                                AS dislikeCnt
+            , A.SECRET_YN                                  AS secretYn
+            , A.DEL_YN                                     AS delYn
+            , DATE_FORMAT(A.REG_DT, '%Y-%m-%d %H:%i:%s')   AS regDt
+            , A.RGTR_ID                                    AS rgtrId
+            , B.USER_NAME                                  AS rgtrName
+            , CONCAT(B.USER_NAME, '(', A.RGTR_ID, ')')     AS rgtrInfo
+            , DATE_FORMAT(A.MDFCN_DT, '%Y-%m-%d %H:%i:%s') AS mdfcnDt
+            , A.MDFR_ID                                    AS mdfrId
+            , C.USER_NAME                                  AS mdfrName
+            , CONCAT(C.USER_NAME, '(', A.MDFR_ID, ')')     AS mdfrInfo
+        FROM TBL_COMMENT A
+        INNER JOIN TBL_USER B ON B.USER_ID = A.RGTR_ID
+        INNER JOIN TBL_USER C ON C.USER_ID = A.MDFR_ID
+        <where>
+            <if test="postNumber != null">
+                AND A.POST_NUMBER = #{postNumber}
+            </if>
+            <if test="commentId != null">
+                AND A.COMMENT_ID = #{commentId}
+            </if>
+        </where>
+        ORDER BY A.ROOT_COMMENT_ID ASC, A.PARENT_COMMENT_ID ASC, A.REG_DT ASC
+    </select>
+
+    <insert id="insertComment"
+            parameterType="org.bplte.core.api.domain.comment.entity.CommentEntity">
+        INSERT INTO TBL_COMMENT ( /* org.bplte.core.api.domain.comment.mapper.CommentMapper.insertComment */
+              POST_NUMBER
+            , PARENT_COMMENT_ID
+            , ROOT_COMMENT_ID
+            , DEPTH
+            , CONTENT
+            , LIKE_CNT
+            , DISLIKE_CNT
+            , SECRET_YN
+            , DEL_YN
+            , REG_DT
+            , RGTR_ID
+            , MDFCN_DT
+            , MDFR_ID
+        ) VALUES (
+              #{postNumber}
+            , #{parentCommentId}
+            , #{rootCommentId}
+            , #{depth}
+            , #{content}
+            , #{likeCnt}
+            , #{dislikeCnt}
+            , #{secretYn}
+            , #{delYn}
+            , NOW()
+            , #{rgtrId}
+            , NOW()
+            , #{mdfrId}
+        )
+    </insert>
+</mapper>
