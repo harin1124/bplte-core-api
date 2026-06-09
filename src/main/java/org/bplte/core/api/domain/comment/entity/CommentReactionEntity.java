@@ -5,7 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 /**
- * 댓글 좋아요/싫어요
+ * 댓글 좋아요/싫어요 반응 엔티티.
  */
 @Getter
 @Setter
@@ -21,8 +21,6 @@ public class CommentReactionEntity {
 	private String userId;
 	/** 반응 구분 (LIKE/DISLIKE) */
 	private String reactionType;
-	/** 삭제 여부 (반응 취소) */
-	private String delYn;
 	/** 등록 일시 */
 	private LocalDateTime regDt;
 	/** 등록자 아이디 */

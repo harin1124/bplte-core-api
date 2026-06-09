@@ -8,6 +8,7 @@ import org.bplte.core.api.domain.post.dto.response.PostListResponse;
 import org.bplte.core.api.domain.post.entity.PostEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Mapper
 public interface PostMapper {
@@ -19,5 +20,5 @@ public interface PostMapper {
 	List<PostListResponse> selectPostList(PostListRequest param);
 	List<PostListResponse> selectMyPostList(MyPostListRequest param);
 	PostDetailResponse selectPost(Long postNumber);
-	PostEntity selectPostByPostNumber(Long postNumber);
+	Optional<PostEntity> selectPostByPostNumber(Long postNumber);
 }

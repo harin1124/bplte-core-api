@@ -107,11 +107,8 @@ public class PostServiceImpl implements PostService {
 
 	@Override
 	public int deletePost(PostDeleteRequest request) {
-		PostEntity postInfo = postMapper.selectPostByPostNumber(request.getPostNumber());
-		
-		if(postInfo == null) {
-			throw new ApiException(ResponseCodeGeneral.NOT_FOUND);
-		}
+		PostEntity postInfo = postMapper.selectPostByPostNumber(request.getPostNumber())
+			.orElseThrow(() -> new ApiException(ResponseCodeGeneral.NOT_FOUND));
 		
 		if(!postInfo.getOwnerUserId().equals(request.getMdfrId())){
 			throw new ApiException(ResponseCodeGeneral.FORBIDDEN);
@@ -123,11 +120,8 @@ public class PostServiceImpl implements PostService {
 	@Override
 	@Transactional
 	public int updatePost(PostUpdateRequest request) {
-		PostEntity postInfo = postMapper.selectPostByPostNumber(request.getPostNumber());
-		
-		if(postInfo == null) {
-			throw new ApiException(ResponseCodeGeneral.NOT_FOUND);
-		}
+		PostEntity postInfo = postMapper.selectPostByPostNumber(request.getPostNumber())
+			.orElseThrow(() -> new ApiException(ResponseCodeGeneral.NOT_FOUND));
 		
 		if(!postInfo.getOwnerUserId().equals(request.getMdfrId())) {
 			throw new ApiException(ResponseCodeGeneral.FORBIDDEN);

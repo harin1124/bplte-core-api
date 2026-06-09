@@ -11,7 +11,6 @@ import org.bplte.core.api.core.swagger.SwaggerConstant;
  */
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(name = "[요청] 댓글 등록 (CommentCreateRequest)")
@@ -33,6 +32,4 @@ public class CommentCreateRequest {
 	@Pattern(regexp = SwaggerConstant.YN_DEFAULT)
 	@Schema(description = "비밀 여부", format = SwaggerConstant.YN_DEFAULT, example = SwaggerConstant.YN_EXAMPLE)
 	private String secretYn;
-	@Schema(hidden = true)
-	private String requestUserId;
 }

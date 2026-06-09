@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.bplte.core.api.domain.comment.mapper.CommentMapper">
+    <select id="selectCommentByCommentId"
+            parameterType="long"
+            resultType="org.bplte.core.api.domain.comment.entity.CommentEntity">
+        SELECT /* org.bplte.core.api.domain.comment.mapper.CommentMapper.selectCommentEntity */
+              COMMENT_ID         AS commentId
+            , POST_NUMBER        AS postNumber
+            , PARENT_COMMENT_ID  AS parentCommentId
+            , ROOT_COMMENT_ID    AS rootCommentId
+            , DEPTH              AS depth
+            , CONTENT            AS content
+            , LIKE_CNT           AS likeCnt
+            , DISLIKE_CNT        AS dislikeCnt
+            , SECRET_YN          AS secretYn
+            , DEL_YN             AS delYn
+            , REG_DT             AS regDt
+            , RGTR_ID            AS rgtrId
+            , MDFCN_DT           AS mdfcnDt
+            , MDFR_ID            AS mdfrId
+        FROM TBL_COMMENT
+        WHERE COMMENT_ID = #{commentId}
+    </select>
+
     <select id="selectCommentList"
             parameterType="org.bplte.core.api.domain.comment.dto.request.CommentDetailRequest"
             resultType="org.bplte.core.api.domain.comment.dto.response.CommentDetailResponse">
@@ -40,8 +62,7 @@
         ORDER BY A.ROOT_COMMENT_ID ASC, A.PARENT_COMMENT_ID ASC, A.REG_DT ASC
     </select>
 
-    <insert id="insertComment"
-            parameterType="org.bplte.core.api.domain.comment.entity.CommentEntity">
+    <insert id="insertComment" parameterType="org.bplte.core.api.domain.comment.entity.CommentEntity">
         INSERT INTO TBL_COMMENT ( /* org.bplte.core.api.domain.comment.mapper.CommentMapper.insertComment */
               POST_NUMBER
             , PARENT_COMMENT_ID
@@ -72,4 +93,29 @@
             , #{mdfrId}
         )
     </insert>
+
+    <update id="updateComment" parameterType="org.bplte.core.api.domain.comment.entity.CommentEntity">
+        UPDATE TBL_COMMENT /* org.bplte.core.api.domain.comment.mapper.CommentMapper.updateComment */
+        SET CONTENT = #{content}, MDFR_ID = #{mdfrId}, MDFCN_DT = NOW()
+        WHERE COMMENT_ID = #{commentId}
+    </update>
+
+    <delete id="deleteComment" parameterType="org.bplte.core.api.domain.comment.entity.CommentEntity">
+        UPDATE TBL_COMMENT /* org.bplte.core.api.domain.comment.mapper.CommentMapper.deleteComment */
+        SET DEL_YN = 'Y', MDFR_ID = #{mdfrId}, MDFCN_DT = NOW()
+        WHERE COMMENT_ID = #{commentId}
+    </delete>
+
+    <update id="updateCommentReactionCount">
+        UPDATE TBL_COMMENT /* org.bplte.core.api.domain.comment.mapper.CommentMapper.updateCommentReactionCount */
+        <choose>
+            <when test='reactionType == "LIKE"'>
+                SET LIKE_CNT = GREATEST(LIKE_CNT + #{countDelta}, 0)
+            </when>
+            <when test='reactionType == "DISLIKE"'>
+                SET DISLIKE_CNT = GREATEST(DISLIKE_CNT + #{countDelta}, 0)
+            </when>
+        </choose>
+        WHERE COMMENT_ID = #{commentId}
+    </update>
 </mapper>
