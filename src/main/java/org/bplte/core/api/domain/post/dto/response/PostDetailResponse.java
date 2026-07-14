@@ -32,7 +32,7 @@ public class PostDetailResponse {
 	@Schema(description = "조회 수")
 	private int inqCnt;
 
-	@Schema(description = "등록 일시", format = SwaggerConstant.DATE_DEFAULT, example = SwaggerConstant.DATE_EXAMPLE)
+	@Schema(description = "등록 일시", format = SwaggerConstant.DATE_TIME_DEFAULT, example = SwaggerConstant.DATE_TIME_EXAMPLE)
 	private String regDt;
 
 	@Schema(description = "등록자 아이디", minLength = 1, maxLength = 30)
@@ -44,7 +44,7 @@ public class PostDetailResponse {
 	@Schema(description = "등록자 정보", format = SwaggerConstant.USER_INFO_DEFAULT, example = SwaggerConstant.USER_INFO_EXAMPLE)
 	private String rgtrInfo;
 
-	@Schema(description = "수정 일시", format = SwaggerConstant.DATE_DEFAULT, example = SwaggerConstant.DATE_EXAMPLE)
+	@Schema(description = "수정 일시", format = SwaggerConstant.DATE_TIME_DEFAULT, example = SwaggerConstant.DATE_TIME_EXAMPLE)
 	private String mdfcnDt;
 
 	@Schema(description = "수정자 아이디", minLength = 1, maxLength = 30)

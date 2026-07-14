@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.bplte.core.api.domain.schedule.mapper.ScheduleMapper">
+    <insert id="insertSchedule"
+            parameterType="org.bplte.core.api.domain.schedule.entity.ScheduleEntity"
+            useGeneratedKeys="true"
+            keyProperty="scheduleNumber"
+            keyColumn="SCHEDULE_NUMBER">
+        INSERT INTO TBL_SCHEDULE ( /* org.bplte.core.api.domain.schedule.mapper.ScheduleMapper.insertSchedule */
+              CATEGORY_NUMBER
+            , TITLE
+            , START_DT
+            , END_DT
+            , DEL_YN
+            , REG_DT
+            , RGTR_ID
+            , MDFCN_DT
+            , MDFR_ID
+        ) VALUES (
+              #{categoryNumber}
+            , #{title}
+            , #{startDt}
+            , #{endDt}
+            , #{delYn}
+            , NOW()
+            , #{rgtrId}
+            , NOW()
+            , #{mdfrId}
+        )
+    </insert>
+
+    <select id="selectScheduleList"
+            parameterType="org.bplte.core.api.domain.schedule.dto.request.ScheduleListRequest"
+            resultType="org.bplte.core.api.domain.schedule.dto.response.ScheduleListResponse">
+        SELECT /* org.bplte.core.api.domain.schedule.mapper.ScheduleMapper.selectScheduleList */
+              A.SCHEDULE_NUMBER                            AS scheduleNumber
+            , B.CATEGORY_NUMBER                            AS categoryNumber
+            , B.CATEGORY_NAME                              AS categoryName
+            , B.COLOR                                      AS cateogryColor
+            , A.TITLE                                      AS title
+            , DATE_FORMAT(A.START_DT, '%Y-%m-%d')          AS startDt
+            , DATE_FORMAT(A.END_DT, '%Y-%m-%d')            AS endDt
+        FROM TBL_SCHEDULE A
+        LEFT OUTER JOIN TBL_SCHEDULE_CATEGORY B ON B.CATEGORY_NUMBER = A.CATEGORY_NUMBER
+        WHERE A.RGTR_ID = #{requestUserId}
+        <if test="scheduleSearchUnit != null and scheduleSearchDt != null">
+            /* 검색 조건 : 스케줄 검색 단위(기간) */
+            AND A.START_DT &lt;= #{rangeEnd}
+            AND A.END_DT &gt;= #{rangeStart}
+        </if>
+        <if test="categoryId != null">
+            /* 검색 조건 : 카테고리 */
+            A.CATEGORY_NUMBER = #{categoryId}
+        </if>
+        ORDER BY A.START_DT
+    </select>
+</mapper>
