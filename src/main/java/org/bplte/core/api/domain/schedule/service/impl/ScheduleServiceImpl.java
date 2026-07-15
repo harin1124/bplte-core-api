@@ -5,6 +5,7 @@ import org.bplte.core.api.core.exception.ApiException;
 import org.bplte.core.api.core.message.ResponseCodeGeneral;
 import org.bplte.core.api.domain.schedule.dto.request.ScheduleCreateRequest;
 import org.bplte.core.api.domain.schedule.dto.request.ScheduleListRequest;
+import org.bplte.core.api.domain.schedule.dto.response.ScheduleDetailResponse;
 import org.bplte.core.api.domain.schedule.dto.response.ScheduleListResponse;
 import org.bplte.core.api.domain.schedule.entity.ScheduleEntity;
 import org.bplte.core.api.domain.schedule.mapper.ScheduleMapper;
@@ -22,6 +23,12 @@ public class ScheduleServiceImpl implements ScheduleService {
 	@Override
 	public List<ScheduleListResponse> getSchedules(ScheduleListRequest request) {
 		return scheduleMapper.selectScheduleList(request);
+	}
+
+	@Override
+	public ScheduleDetailResponse getSchedule(String currentUserId, Long scheduleNumber) {
+		return scheduleMapper.selectSchedule(currentUserId, scheduleNumber)
+			.orElseThrow(() -> new ApiException(ResponseCodeGeneral.NOT_FOUND));
 	}
 
 	@Override

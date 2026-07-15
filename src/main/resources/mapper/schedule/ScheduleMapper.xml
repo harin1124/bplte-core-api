@@ -54,4 +54,29 @@
         </if>
         ORDER BY A.START_DT
     </select>
+
+    <select id="selectSchedule" resultType="org.bplte.core.api.domain.schedule.dto.response.ScheduleDetailResponse">
+        SELECT /* org.bplte.core.api.domain.schedule.mapper.ScheduleMapper.selectSchedule */
+              A.SCHEDULE_NUMBER                            AS scheduleNumber
+            , B.CATEGORY_NUMBER                            AS categoryNumber
+            , B.CATEGORY_NAME                              AS categoryName
+            , B.COLOR                                      AS cateogryColor
+            , A.TITLE                                      AS title
+            , DATE_FORMAT(A.START_DT, '%Y-%m-%d')          AS startDt
+            , DATE_FORMAT(A.END_DT, '%Y-%m-%d')            AS endDt
+            , A.DEL_YN                                     AS delYn
+            , DATE_FORMAT(A.REG_DT, '%Y-%m-%d %H:%i:%s')   AS regDt
+            , A.RGTR_ID                                    AS rgtrId
+            , C.USER_NAME                                  AS rgtrName
+            , CONCAT(C.USER_NAME, '(', A.RGTR_ID, ')')     AS rgtrInfo
+            , DATE_FORMAT(A.MDFCN_DT, '%Y-%m-%d %H:%i:%s') AS mdfcnDt
+            , A.MDFR_ID                                    AS mdfrId
+            , D.USER_NAME                                  AS mdfrName
+            , CONCAT(D.USER_NAME, '(', A.MDFR_ID, ')')     AS mdfrInfo
+        FROM TBL_SCHEDULE A
+        LEFT OUTER JOIN TBL_SCHEDULE_CATEGORY B ON B.CATEGORY_NUMBER = A.CATEGORY_NUMBER
+        INNER JOIN TBL_USER C ON C.USER_ID = A.RGTR_ID
+        INNER JOIN TBL_USER D ON D.USER_ID = A.MDFR_ID
+        WHERE A.DEL_YN = 'N' AND A.RGTR_ID = #{currentUserId} AND A.SCHEDULE_NUMBER = #{scheduleNumber}
+    </select>
 </mapper>

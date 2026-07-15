@@ -8,6 +8,7 @@ import org.bplte.core.api.config.annotation.CurrentUser;
 import org.bplte.core.api.core.ApiResponse;
 import org.bplte.core.api.domain.schedule.dto.request.ScheduleCreateRequest;
 import org.bplte.core.api.domain.schedule.dto.request.ScheduleListRequest;
+import org.bplte.core.api.domain.schedule.dto.response.ScheduleDetailResponse;
 import org.bplte.core.api.domain.schedule.dto.response.ScheduleListResponse;
 import org.bplte.core.api.domain.schedule.service.ScheduleService;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +34,11 @@ public class ScheduleController {
 
 	@GetMapping("/{id}")
 	@Operation(summary = "스케줄 상세 조회")
-	public ApiResponse<Void> getSchedule(@PathVariable Long id) {
-		return ApiResponse.success();
+	public ApiResponse<ScheduleDetailResponse> getSchedule(
+		@CurrentUser String currentUserId,
+		@PathVariable Long id
+	) {
+		return ApiResponse.success(scheduleService.getSchedule(currentUserId, id));
 	}
 
 	@PostMapping
